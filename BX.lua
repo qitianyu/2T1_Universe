@@ -1,13 +1,15 @@
 -------------------修改表注严禁修改的地方必将追责，请尊重作者以及license-------------------
-
+----------------------本人开发时已获取KEK作者许可调用函数
+----------------------如需二改清自行联系作者以及KEK作者许可
 
 -----------------严禁修改此处----------------------------
 ui.notify_above_map("~b~BX_SYSTEM\n欢迎使用BX整合v0.1\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用BX整合",0)
-ui.notify_above_map("~b~BX_SYSTEM\n本LUA开源地址\nhttps://github.com/BaiXinSpuer/2T1_BX_MIX\n如二改清遵守license","欢迎使用BX整合",0)----------删改这里死全家
+ui.notify_above_map("~b~BX_SYSTEM\n~r~本LUA部分函数已获KEK授权","欢迎使用BX整合",0)
+ui.notify_above_map("~b~BX_SYSTEM\n本LUA开源地址\n~y~https://github.com/BaiXinSpuer/2T1_BX_MIX","欢迎使用BX整合",0)
 -----------------严禁修改此处----------------------------
 
 local main=menu.add_feature("BX_SYSTEM","parent",0)
-
+--------------整合其他LUA必备库（方法）---------------
 local Myped = function()
     return player.get_player_ped(player.player_id())
 end
@@ -20,6 +22,132 @@ local Pedweapon = function()
     return ped.get_current_ped_weapon(Myped())
 end
 local all_ped=ped.get_all_peds()
+-----------------抢主机 functions from KEK‘s authorization--------------------
+local script_event_hashes = {
+    ["Netbail kick"] = 2092565704,
+    ["Kick 1"] = 1964309656,
+    ["Kick 2"] = 696123127,
+    ["Kick 3"] = 43922647,
+    ["Kick 4"] = 600486780,
+    ["Kick 5"] = 1954846099,
+    ["Kick 6"] = 153488394,
+    ["Kick 7"] = 1249026189,
+    ["Kick 8"] = 515799090,
+    ["Kick 9"] = 1463355688,
+    ["Kick 10"] = -1382676328,
+    ["Kick 11"] = 1256866538,
+    ["Kick 12"] = 515799090,
+    ["Kick 13"] = -1813981910,
+    ["Kick 14"] = 202252150,
+    ["Kick 15"] = -19131151,
+    ["Kick 16"] = -635501849,
+    ["Kick 17"] = 1964309656,
+    ["Crash 1"] = -988842806,
+    ["Crash 2"] = -2043109205,
+    ["Crash 3"] = 1926582096,
+    ["Crash 4"] = 153488394,
+    ["Script host crash 1"] = 315658550,
+    ["Script host crash 2"] = -877212109,
+    ["Disown personal vehicle"] = -2072214082,
+    ["Vehicle EMP"] = 975723848,
+    ["Destroy personal vehicle"] = 1229338575,
+    ["Kick out of vehicle"] = -1005623606,
+    ["Remove wanted level"] = 1187364773,
+    ["Give OTR or ghost organization"] = -397188359,
+    ["Block passive"] = 1472357458,
+    ["Send to mission"] = -1147284669,
+    ["Send to Perico island"] = -1479371259,
+    ["Apartment invite"] = 1249026189,
+    ["CEO ban"] = 1355230914,
+    ["Dismiss or terminate from CEO"] = -316948135,
+    ["Insurance notification"] = 299217086,
+    ["Transaction error"] = -2041535807,
+    ["CEO money"] = 1152266822,
+    ["Bounty"] = -1906146218,
+    ["Banner"] = 1659915470,
+    ["Sound 1"] = 1537221257,
+    ["Sound 2"] = -1162153263,
+    ["Bribe authorities"] = -151720011
+}	
+
+function get_script_event_hash(name)
+    local hash = script_event_hashes[name]
+    if math.type(hash) == "integer" then
+        return hash
+    else
+        return 0
+    end
+
+end
+
+function generic_player_global(pid)
+    return script.get_global_i(1630816 + (1 + (pid * 597) + 508))
+end
+
+local function get_people_in_front_of_person_in_host_queue()
+    if network.network_is_host() then
+        return {}, {}
+    end
+    local hosts, friends = {}, {}
+    local player_host_priority = player.get_player_host_priority(player.player_id())
+    for pid = 0, 31 do
+        if player.is_player_valid(pid) and pid ~= player.player_id() then
+            if player.get_player_host_priority(pid) <= player_host_priority or player.is_player_host(pid) then
+                hosts[#hosts + 1] = pid
+                if network.is_scid_friend(player.get_player_scid(pid)) then
+                    friends[#friends + 1] = pid
+                end
+            end
+        end
+    end
+    return hosts, friends
+end
+
+local SE_send_limiter = {}
+function send_script_event(name, pid, args, friend_condition)
+    if player.is_player_valid(pid) and pid ~= player.player_id() then
+        if math.type(pid) == "integer" then 
+            for i = 1, #args do
+                if math.type(args[i]) ~= "integer" then
+                    return
+                end
+            end
+        else
+            return
+        end
+        repeat
+            local temp = {}
+            for i = 1, #SE_send_limiter do
+                if SE_send_limiter[i] > utils.time_ms() then
+                    temp[#temp + 1] = SE_send_limiter[i]
+                end
+            end
+            SE_send_limiter = temp
+            if #temp >= 10 then
+                system.yield(0)
+            end
+        until #temp < 10
+        if player.is_player_valid(pid) then
+            SE_send_limiter[#SE_send_limiter + 1] = utils.time_ms() + (1 // gameplay.get_frame_time())
+            script.trigger_script_event(get_script_event_hash(name), pid, args)
+        end
+    else
+        system.yield(0)
+    end
+end
+
+local function get_host()
+    local hosts = get_people_in_front_of_person_in_host_queue()
+    for i, pid in pairs(hosts) do
+        send_script_event("Netbail kick", pid, {pid, generic_player_global(pid)})
+        for x=0,17 do
+            send_script_event("Kick "..tostring(x), pid, {pid, generic_player_global(pid)})
+        end
+    end
+    return {}, false
+end
+--------------------------------------------------------
+
 ---------------------mian-------------------------------
 
 local main_self=menu.add_feature("玩家选项","parent",main.id)
@@ -44,7 +172,8 @@ local main_about=menu.add_feature(
     function ()
     -----------------严禁修改此处----------------------------
         ui.notify_above_map("~b~BX_SYSTEM\n欢迎使用BX整合v0.1\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用BX整合",0)
-        ui.notify_above_map("~b~BX_SYSTEM\n本LUA开源地址\nhttps://github.com/BaiXinSpuer/2T1_BX_MIX\n如二改清遵守license","欢迎使用BX整合",0)
+        ui.notify_above_map("~b~BX_SYSTEM\n~r~本LUA部分函数已获KEK授权","欢迎使用BX整合",0)
+        ui.notify_above_map("~b~BX_SYSTEM\n本LUA开源地址\n~y~https://github.com/BaiXinSpuer/2T1_BX_MIX","欢迎使用BX整合",0)
     -----------------严禁修改此处---------------------------- 
 end)
 
@@ -80,6 +209,36 @@ local health_cheat=menu.add_feature(
 )
 
 -----------在线玩家---------------
+
+
+-----------主机掠夺 Done--------------
+
+local get_host=menu.add_feature(
+    "主机掠夺",
+    "toggle",
+    main_network.id,
+    function(a)
+        while a.on and not network.network_is_host() do
+            system.yield(0)
+				local nothing, friends = get_host()
+				if friends then
+					break
+				end
+		end
+			a.on = false
+    end
+
+
+)
+
+
+
+
+
+
+
+
+
 -------------主机检测 Done--------------
 
 local is_host=menu.add_feature(
@@ -121,6 +280,106 @@ local kick=menu.add_feature(
     end
 
 )
+
+-----------------暴力踢出 Done-----------------
+local force_kick=menu.add_feature(
+    "暴力踢出",
+    "toggle",
+    main_net_all.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            for pid=0,31 do
+                if pid~=me and not player.is_player_friend(pid) and player.is_player_valid(pid) then
+                    network.network_session_kick_player(pid)
+                    send_script_event("Netbail kick", pid, {pid, generic_player_global(pid)})
+                    for x=0,17 do
+                        send_script_event("Kick "..tostring(x), pid, {pid, generic_player_global(pid)})
+                    end
+                end
+            end
+        end
+    end
+)
+
+
+
+-------------------激光眼 待完善--------------------
+local killing_eye=menu.add_feature(
+    "激光眼",
+    "toggle",
+    main_self.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local ped=player.get_player_ped(me)
+            if controls.is_control_pressed(0,252) then
+                pos=player.get_player_coords(me)
+                rot = entity.get_entity_rotation(ped)
+                pos=pos+rot
+                print(pos)
+            end
+        end
+    end
+
+)
+killing_eye.hidden=true
+
+
+
+
+--------------载具驾驶枪----------------------
+
+local vehicle_driver_weapon=menu.add_feature("载具驾驶枪","toggle",main_weapon.id)
+vehicle_driver_weapon.hidden=true
+
+------------------快速射击 Done---------------------------
+---------------------此处代码基于 revive---------------
+local fast_shooter=menu.add_feature(
+    "快速射击",
+    "toggle",
+    main_weapon.id,
+    function(a)
+        while a.on do
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            system.yield(0)
+            if controls.get_control_normal(0,142)==0.0 then
+                state=nil
+            else
+                state=1
+            end
+            while state do
+                local success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                while not success do
+                    success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                    system.wait(0)
+                end
+                local dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1.5
+                v3_start = v3_start + dir
+                dir = nil
+                local v3_end = player.get_player_coords(me)
+                dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1500
+                v3_end = v3_end + dir
+                local hash_weapon = ped.get_current_ped_weapon(my_ped)
+                gameplay.shoot_single_bullet_between_coords(v3_start, v3_end, 1, hash_weapon, my_ped, true, false, 1000)
+                system.yield(0)
+                return HANDLER_CONTINUE
+            end
+        end
+    end
+
+
+)
+-------------------------------------------------------
+
+
 
 ---------------冻结战局 Done---------------------
 
@@ -169,17 +428,19 @@ local fuck_them=menu.add_feature(
     "toggle",
     main_protect.id,
     function(a)
-        local me=player.player_id()
-        if a.on then
-            for pid=0,31 do
-                if pid~=me and player.is_player_valid(pid) then
-                    player.set_player_as_modder(pid,1<<0x10)
+        while a.on do
+            system.yield(0)
+            if a.on then
+                for pid=0,31 do
+                    if pid~=me and player.is_player_valid(pid) then
+                        player.set_player_as_modder(pid,1<<0x10)
+                    end
                 end
-            end
-        else
-            for pid=0,31 do
-                if pid~=me and player.is_player_valid(pid) then
-                    player.unset_player_as_modder(pid,1<<0x10)
+            else
+                for pid=0,31 do
+                    if pid~=me and player.is_player_valid(pid) then
+                        player.unset_player_as_modder(pid,1<<0x10)
+                    end
                 end
             end
         end
@@ -189,6 +450,47 @@ local fuck_them=menu.add_feature(
 
 
 )
+
+------------------Ozark's protect Done------------------
+local fuck_myself=menu.add_feature(
+    "Øzark的紧急避难",
+    "toggle",
+    main_protect.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local pos=player.get_player_coords(me)
+            if a.on then
+                gameplay.clear_area_of_objects(pos,500,0)
+                gameplay.clear_area_of_vehicles(pos,500,false,false,false,false,false)
+                gameplay.clear_area_of_peds(pos,500,false)
+                gameplay.clear_area_of_cops(pos,500,false)
+                for pid=0,31 do
+                    if pid~=me and player.is_player_valid(pid) and a.on then
+                        player.set_player_as_modder(pid,1<<0x10)
+                        player.set_player_visible_locally(pid,false)
+                    end
+                end
+            else
+                for pid=0,31 do
+                    if pid~=me and player.is_player_valid(pid) then
+                        player.unset_player_as_modder(pid,1<<0x10)
+                        player.set_player_visible_locally(pid,true)
+                    end
+                end
+            end
+        end
+    end
+
+
+)
+
+
+
+
+
+
 
 ---------------------观察者检测 Done---------------
 local fuck_spectater=menu.add_feature(

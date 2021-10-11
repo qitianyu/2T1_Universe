@@ -2,11 +2,22 @@
 ----------------------本人开发时已获取KEK作者许可调用函数
 ----------------------如需二改清自行联系作者以及KEK作者许可
 
------------------严禁修改此处----------------------------
-ui.notify_above_map("~b~BX_SYSTEM\n欢迎使用BX整合v0.1\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用BX整合",0)
-ui.notify_above_map("~b~BX_SYSTEM\n~r~本LUA部分函数已获KEK授权","欢迎使用BX整合",0)
-ui.notify_above_map("~b~BX_SYSTEM\n本LUA开源地址\n~y~https://github.com/BaiXinSpuer/2T1_BX_MIX","欢迎使用BX整合",0)
------------------严禁修改此处----------------------------
+
+
+
+
+
+
+
+
+
+-----------------------------
+login_start=true
+--启动脚本传送，欢迎语
+-----------------------------
+
+
+
 
 local main=menu.add_feature("BX_SYSTEM","parent",0)
 --------------整合其他LUA必备库（方法）---------------
@@ -146,6 +157,7 @@ local function get_host()
     end
     return {}, false
 end
+
 --------------------------------------------------------
 
 ---------------------mian-------------------------------
@@ -165,13 +177,18 @@ local main_weapon=menu.add_feature("武器选项","parent",main.id)
 local main_protect=menu.add_feature("保护选项","parent",main.id)
 
 
+local main_vehicle_menu=menu.add_feature("载具选项","parent",main.id)
+
+
+local main_options=menu.add_feature("菜单设置","parent",main.id)
+
 local main_about=menu.add_feature(
     "关于",
     "action",
     main.id,
     function ()
     -----------------严禁修改此处----------------------------
-        ui.notify_above_map("~b~BX_SYSTEM\n欢迎使用BX整合v0.1\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用BX整合",0)
+        ui.notify_above_map("~b~BX_SYSTEM\n欢迎使用BX整合v0.4\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用BX整合",0)
         ui.notify_above_map("~b~BX_SYSTEM\n~r~本LUA部分函数已获KEK授权","欢迎使用BX整合",0)
         ui.notify_above_map("~b~BX_SYSTEM\n本LUA开源地址\n~y~https://github.com/BaiXinSpuer/2T1_BX_MIX","欢迎使用BX整合",0)
     -----------------严禁修改此处---------------------------- 
@@ -182,11 +199,92 @@ local main_net_all=menu.add_feature("全体成员","parent",main_network.id)
 
 
 
+local mission_cheat=menu.add_feature("» 辅助功能","parent",Heist_Control.id)
 
 
 
 
+----------------------------on_start----------------------------
 
+local on_start_text=menu.add_feature(
+    "这是你看不见的",
+    "toggle",
+    main.id,
+    function(a)
+        local i=0
+        while a.on do
+            system.yield(0)
+            ui.set_text_color(i*10,i*2,100-i, 255)				
+            ui.set_text_scale(1)
+            ui.set_text_font(0)
+            ui.set_text_centre(true)
+            ui.set_text_outline(true)
+            ui.draw_text("欢迎使用\nBX整合",v2(0.5,0.3))
+            i=i+20
+        end
+    end
+)
+on_start_text.hidden=true
+on_start_text.threaded=true
+local on_start_end=menu.add_feature(
+    "这是你看不见的",
+    "toggle",
+    main.id,
+    function(a)
+        i=255
+        while a.on and i>0 do
+            system.yield(0)
+            ui.set_text_color(255,255, 255, i)					
+            ui.set_text_scale(1)
+            ui.set_text_font(0)
+            ui.set_text_centre(true)
+            ui.set_text_outline(true)
+            ui.draw_text("欢迎使用\nBX整合",v2(0.5,0.3))
+            -- ui.draw_text("BX整合",v2(0.45,0.5))
+            i=i-1
+        end
+    end
+)
+on_start_end.hidden=true
+on_start_end.threaded=true
+local on_start=menu.add_feature(
+    "这是你看不见的",
+    "action",
+    main.id,
+    function()
+        local me=player.player_id()
+        local my_ped=player.get_player_ped(me)
+        time.set_clock_time(23, 0, 0)
+        entity.set_entity_coords_no_offset(my_ped, v3(-75.392, -819.27, 326.175))
+        on_start_text.on=true
+        graphics.set_next_ptfx_asset("scr_trevor1")
+        while not graphics.has_named_ptfx_asset_loaded("scr_trevor1") do
+            graphics.request_named_ptfx_asset("scr_trevor1")
+            system.wait(0)
+        end
+        system.wait(4000)
+        graphics.set_next_ptfx_asset("scr_trevor1")
+        while not graphics.has_named_ptfx_asset_loaded("scr_trevor1") do
+            graphics.request_named_ptfx_asset("scr_trevor1")
+            system.wait(0)
+        end
+        graphics.start_ptfx_looped_on_entity("scr_trev1_trailer_boosh", my_ped, v3(0, 0.0, 0.0), v3(0, 0, 0), 2)
+        system.wait(1)
+        fire.add_explosion(v3(-50, -819.27, 326.175), 0, true, false, 0, my_ped)
+        system.wait(1)
+        time.set_clock_time(12, 0, 0)
+        on_start_text.on=false
+        on_start_end.on=true
+        system.wait(4000)
+        on_start_end.on=false
+    end
+)
+on_start.hidden=true
+if login_start then
+    on_start.on=true
+else
+    on_start=false
+end
 --------------------toggle_targets------------------------------
 
 ------------自我选项------------------
@@ -225,7 +323,6 @@ local get_host=menu.add_feature(
 					break
 				end
 		end
-			a.on = false
     end
 
 
@@ -258,10 +355,9 @@ local is_host=menu.add_feature(
             end
         end
     end
-            
-
-
 )
+
+
 ---------------踢出玩家 Done-------------------
 local kick=menu.add_feature(
     "主机踢",
@@ -305,35 +401,190 @@ local force_kick=menu.add_feature(
 
 
 
--------------------激光眼 待完善--------------------
-local killing_eye=menu.add_feature(
-    "激光眼",
+
+
+
+
+
+
+
+-------------------激光眼 Done--------------------
+local killing_eye_v1=menu.add_feature(
+    "激光眼 V1",
     "toggle",
     main_self.id,
     function(a)
         while a.on do
             system.yield(0)
             local me=player.player_id()
-            local ped=player.get_player_ped(me)
-            if controls.is_control_pressed(0,252) then
-                pos=player.get_player_coords(me)
-                rot = entity.get_entity_rotation(ped)
-                pos=pos+rot
-                print(pos)
+            local my_ped=player.get_player_ped(me)
+            if controls.get_control_normal(0,252)==0.0 then
+                state=nil
+            else
+                state=1
+            end
+            while state do
+                local success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                while not success do
+                    success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                    system.wait(0)
+                end
+                local dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1.5
+                v3_start = v3_start + dir + v3(0,0,1)
+                dir = nil
+                local v3_end = player.get_player_coords(me)
+                dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1500
+                v3_end = v3_end + dir
+                gameplay.shoot_single_bullet_between_coords(v3_start, v3_end, 1, 177293209, my_ped, true, false, 1000)
+                system.yield(0)
+                return HANDLER_CONTINUE
             end
         end
     end
 
 )
-killing_eye.hidden=true
 
+local killing_eye_v2=menu.add_feature(
+    "激光眼 V2",
+    "toggle",
+    main_self.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            if controls.get_control_normal(0,252)==0.0 then
+                state=nil
+            else
+                state=1
+            end
+            while state do
+                local success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                while not success do
+                    success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                    system.wait(0)
+                end
+                local dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1.5
+                v3_start = v3_start + dir + v3(0,0,1)
+                dir = nil
+                local v3_end = player.get_player_coords(me)
+                dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1500
+                v3_end = v3_end + dir
+                gameplay.shoot_single_bullet_between_coords(v3_start, v3_end, 1, 1432025498, my_ped, true, false, 1000)
+                system.yield(0)
+                return HANDLER_CONTINUE
+            end
+        end
+    end
 
+)
 
+local killing_eye_v3=menu.add_feature(
+    "激光眼 V3",
+    "toggle",
+    main_self.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            if controls.get_control_normal(0,252)==0.0 then
+                state=nil
+            else
+                state=1
+            end
+            while state do
+                local success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                while not success do
+                    success, v3_start = ped.get_ped_bone_coords(my_ped, 0x67f2, v3())
+                    system.wait(0)
+                end
+                local dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1.5
+                v3_start = v3_start + dir + v3(0,0,1)
+                dir = nil
+                local v3_end = player.get_player_coords(me)
+                dir = cam.get_gameplay_cam_rot()
+                dir:transformRotToDir()
+                dir = dir * 1500
+                v3_end = v3_end + dir
+                gameplay.shoot_single_bullet_between_coords(v3_start, v3_end, 1, 1834241177, my_ped, true, false, 1000)
+                system.yield(0)
+                return HANDLER_CONTINUE
+            end
+        end
+    end
 
---------------载具驾驶枪----------------------
+)
 
-local vehicle_driver_weapon=menu.add_feature("载具驾驶枪","toggle",main_weapon.id)
-vehicle_driver_weapon.hidden=true
+-------------------------激光眼系列-------------------------------------
+
+--------------载具驾驶枪 Done----------------------
+function fuck_NPC_car(veh)
+    entity.set_entity_coords_no_offset(veh,v3(0,0,0))
+    system.yield(0)
+    local me=player.player_id()
+    local my_ped=player.get_player_ped(me)
+    local veh=player.get_entity_player_is_aiming_at(me)
+    local hash=entity.get_entity_model_hash(veh)
+    if streaming.is_model_a_vehicle(hash) then
+        ped.set_ped_into_vehicle(my_ped,veh,-1)
+    elseif streaming.is_model_a_ped(hash) then
+        fuck_NPC_car(player.get_entity_player_is_aiming_at(me))
+    end
+end
+
+function fuck_Player_car(veh)
+    ped.clear_ped_tasks_immediately(veh)
+    system.yield(0)
+    local me=player.player_id()
+    local my_ped=player.get_player_ped(me)
+    local veh=player.get_entity_player_is_aiming_at(me)
+    local hash=entity.get_entity_model_hash(veh)
+    if streaming.is_model_a_vehicle(hash) then
+        ped.set_ped_into_vehicle(my_ped,veh,-1)
+    elseif ped.is_ped_a_player(veh) then
+        fuck_Player_car(veh)
+    else
+        fuck_NPC_car(veh)
+    end
+end
+
+local vehicle_driver_weapon=menu.add_feature(
+    "载具驾驶枪",
+    "toggle",
+    main_weapon.id,
+    function(a)
+        local hash=0
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            local veh=player.get_entity_player_is_aiming_at(me)
+            local hash=entity.get_entity_model_hash(veh)
+            local pos=player.get_player_coords(me)
+            if ped.is_ped_shooting(my_ped) then
+                if streaming.is_model_a_vehicle(hash) then
+                    ped.set_ped_into_vehicle(my_ped,veh,-1)
+                elseif ped.is_ped_a_player(veh) then
+                    fuck_Player_car(veh)
+                elseif streaming.is_model_a_ped(hash) and ped.is_ped_in_any_vehicle(veh) then
+                    fuck_NPC_car(veh)
+                end
+            end
+        end
+    end
+
+)
 
 ------------------快速射击 Done---------------------------
 ---------------------此处代码基于 revive---------------
@@ -420,11 +671,70 @@ ad_m:set_str_data({
     "关闭"
 })
 
+------------------------菜单设置--------------------------
+
+ozark_titles={
+    "欧扎克的跑路骗局？",
+    "这真是个天大的笑话，对吗？",
+    "欧扎克永远的神！！！",
+    "这是个多么明显的骗局",
+    "欧扎克更新V38？",
+    '噢！我们表示真挚的道歉',
+    "这就像精美的葡萄酒",
+    "它看起来很火!!!!做得好",
+    "Øzark",
+    "是的，我们拿了你们的钱跑了！！",
+    "我们没有公布源代码，懂了吗？",
+    "你为什么还在用欧扎克？",
+    "你为什么不买个2Take1？这听起来很荒唐，对吧？",
+    "记得叫你的亲朋好友买个Øzark，因为这很酷",
+    "Øzark Beta",
+    "Øzark退出骗局？",
+    "噢！不！你为什么要走~",
+    "是的，我们在今天收到了来自Take2的传真",
+    "要求我们立即关停Øzark的服务器",
+    "不要悲伤，不要难过，因为所有经销商都是亏损的！",
+    "请不要为难他们，他们都是很出色的人",
+    "我不知道该怎么告诉你这个悲痛的消息",
+    "没错，如你所见，老子回来了！"
+}
+
+
+
+
+local ozark_title=menu.add_feature(
+    "Øzark的头部信息",
+    "toggle",
+    main_options.id,
+    function(a)
+        local x=math.random(1,#ozark_titles)
+        local lenth=#ozark_titles[x]*0.002+0.012
+        print(lenth)
+        while a.on do
+            system.yield(0)
+            ui.draw_rect(0.001, 0.999, 4.5, 0.085, 0, 0, 0, 0)
+            ui.set_text_color(255, 255, 255, 125)				
+            ui.set_text_scale(0.35)
+            ui.set_text_font(0)
+            ui.set_text_centre(true)
+            ui.set_text_outline(true)
+            ui.draw_text("F4",v2(0.5,0.16))
+            ui.set_text_scale(0.4)
+            ui.set_text_color(255, 100, 100, 225)
+            ui.draw_text(ozark_titles[x],v2(0.5-lenth,0.13))
+        end
+    end
+
+
+)
+
+
+
 
 --------------------保护选项-------------------
 ----------------标记所有玩家 Done------------------
 local fuck_them=menu.add_feature(
-    "阻止同步（标记所有玩家）",
+    "阻止同步--标记所有玩家",
     "toggle",
     main_protect.id,
     function(a)
@@ -462,10 +772,10 @@ local fuck_myself=menu.add_feature(
             local me=player.player_id()
             local pos=player.get_player_coords(me)
             if a.on then
-                gameplay.clear_area_of_objects(pos,500,0)
-                gameplay.clear_area_of_vehicles(pos,500,false,false,false,false,false)
-                gameplay.clear_area_of_peds(pos,500,false)
-                gameplay.clear_area_of_cops(pos,500,false)
+                gameplay.clear_area_of_objects(pos,1000,0)
+                gameplay.clear_area_of_vehicles(pos,100,false,false,false,false,false)
+                gameplay.clear_area_of_peds(pos,1000,false)
+                gameplay.clear_area_of_cops(pos,1000,false)
                 for pid=0,31 do
                     if pid~=me and player.is_player_valid(pid) and a.on then
                         player.set_player_as_modder(pid,1<<0x10)
@@ -482,14 +792,82 @@ local fuck_myself=menu.add_feature(
             end
         end
     end
-
-
 )
 
 
 
+--------------------------functions of AA-----------------------------
+
+local function AA_location(me)
+    local my_ped=player.get_player_ped(me)
+    local pos=player.get_player_coords(me)
+    entity.set_entity_coords_no_offset(my_ped,pos + v3(math.random(0,3),math.random(0,3),0))
+    system.yield(0)
+    entity.set_entity_coords_no_offset(my_ped,pos - v3(math.random(1,3),math.random(1,3),0))
+
+end
 
 
+local function Back_kill(pid,my_ped,me)
+    local pos=player.get_player_coords(pid)
+    local my_pos=player.get_player_coords(me)
+    if my_pos>pos then
+        entity.set_entity_coords_no_offset(my_ped,pos - v3(math.random(0,3),math.random(0,3),0))
+    else
+        entity.set_entity_coords_no_offset(my_ped,pos + v3(math.random(0,3),math.random(0,3),0))
+    end
+end
+
+local function remove_player_gun(pid)
+    local enemy_ped=player.get_player_ped(pid)
+    local current_weapon=ped.get_current_ped_weapon(enemy_ped)
+    weapon.remove_weapon_from_ped(enemy_ped,current_weapon)
+end
+
+local function freeze_player(pid)
+    local enemy_ped=player.get_player_ped(pid)
+    ped.clear_ped_tasks_immediately(enemy_ped)
+end
+
+
+
+
+
+----------------Anti - Aim-----------------------------
+local Anti_aim=menu.add_feature(
+    "反自瞄",
+    "value_str",
+    main_protect.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            for pid=0,31 do
+                if player.is_player_valid(pid) and pid~=me and player.get_entity_player_is_aiming_at(pid)==my_ped then
+                    if a.value==0 then
+                        AA_location(me)
+                    elseif a.value==1 then
+                        Back_kill(pid,my_ped,me)
+                    elseif a.value==2 then
+                        remove_player_gun(pid)
+                    elseif a.value==3 then
+                        freeze_player(pid)
+                    end
+                end
+            end
+        end
+    end
+
+)
+Anti_aim:set_str_data({
+    "假身",
+    "背刺",
+    "收枪",
+    "冻结"
+}
+
+)
 
 
 ---------------------观察者检测 Done---------------
@@ -548,7 +926,7 @@ local main_weapon_color=menu.add_feature(
 local speed_fire_veh=menu.add_feature(
     "车载武器快速射击",
     "toggle",
-    main_weapon.id,
+    main_vehicle_menu.id,
     function(a)
         if a.on then
             local myped = player.get_player_ped(player.player_id())
@@ -562,6 +940,69 @@ local speed_fire_veh=menu.add_feature(
         return HANDLER_POP
     end
 )
+
+
+
+-------------------车载降落伞-----------------------
+--------------------------------------------------
+
+local veh_boost=menu.add_feature(
+    "载具快速充能",
+    "toggle",
+    main_vehicle_menu.id,
+    function(a)
+        local state=0
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            if ped.is_ped_in_any_vehicle(my_ped) then
+                local veh=ped.get_vehicle_ped_is_using(my_ped)
+                vehicle.set_vehicle_rocket_boost_refill_time(veh,0)
+            end
+        end
+    end
+)
+
+local veh_boost_infinity=menu.add_feature(
+    "载具无限充能加速",
+    "toggle",
+    main_vehicle_menu.id,
+    function(a)
+        local state=0
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            if ped.is_ped_in_any_vehicle(my_ped) then
+                local veh=ped.get_vehicle_ped_is_using(my_ped)
+                vehicle.set_vehicle_rocket_boost_percentage(veh,999999.0)
+            end
+        end
+    end
+)
+
+
+local veh_boost_infinity=menu.add_feature(
+    "载具自动加速",
+    "toggle",
+    main_vehicle_menu.id,
+    function(a)
+        local state=0
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            if ped.is_ped_in_any_vehicle(my_ped) then
+                local veh=ped.get_vehicle_ped_is_using(my_ped)
+                vehicle.set_vehicle_rocket_boost_active(veh,true)
+            end
+        end
+    end
+)
+
+
+
 
 --------------自动切枪 Done----------------
 local main_weapon_switch=menu.add_feature(
@@ -627,7 +1068,7 @@ local main_weapon_switch=menu.add_feature(
 local main_auto_skip=menu.add_feature(
     "自动跳过过场动画",
     "toggle",
-    Heist_Control.id,
+    mission_cheat.id,
     function(a)
         while a.on do
             system.yield(0)
@@ -642,27 +1083,47 @@ local main_auto_skip=menu.add_feature(
 )
 
 
---------------车友会1000级-----------------
-local main_cheyouhui=menu.add_feature(
-    "车友会解锁1000级",
-    "action",
-    Heist_Control.id,
-    function()
-        stats.stat_set_int(gameplay.get_hash_key("MP0_CAR_CLUB_REP"), 997430, true)
-        stats.stat_set_int(gameplay.get_hash_key("MP1_CAR_CLUB_REP"), 997430, true)
-    end
 
+
+
+----------------------Anti - NPC---------------------
+local Anti_Npc=menu.add_feature(
+    "杀死NPC",
+    "toggle",
+    mission_cheat.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            all_peds=ped.get_all_peds()
+            for i=1,#all_peds do
+                if not ped.is_ped_a_player(all_peds[i]) then
+                    ped.set_ped_health(all_peds[i],0)
+                end
+            end
+        end
+    end
 )
 
-local main_reset_cheyouhui=menu.add_feature(
-    "车友会重置1级",
-    "action",
-    Heist_Control.id,
-    function()
-        stats.stat_set_int(gameplay.get_hash_key("MP0_CAR_CLUB_REP"), 0, true)
-        stats.stat_set_int(gameplay.get_hash_key("MP1_CAR_CLUB_REP"), 0, true)
+-----------------恶心NPC?--------------------
+local Anti_NPC_Aim_Shoot=menu.add_feature(
+    "恶心NPC",
+    "toggle",
+    mission_cheat.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            all_peds=ped.get_all_peds()
+            for i=1,#all_peds do
+                if not ped.is_ped_a_player(all_peds[i]) and ped.get_current_ped_weapon(all_peds[i]) then
+                    ped.set_ped_accuracy(all_peds[i],0)
+                    ped.set_ped_combat_ability(all_peds[i],0)
+                    ped.set_ped_combat_range(all_peds[i],0)
+                    weapon.remove_all_ped_weapons(all_peds[i])
+                    entity.freeze_entity(all_peds[i],true)
+                end
+            end
+        end
     end
-
 )
 
 
@@ -673,19 +1134,12 @@ local main_reset_cheyouhui=menu.add_feature(
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+main_about.on=true
+is_host.on=true
+fuck_spectater.on=true
+main_auto_skip.on=true
+Anti_aim.on=true
+ozark_title.on=true
 
 
 
@@ -891,60 +1345,61 @@ local CLASSIC_HEISTS = menu.add_feature("» 公寓抢劫", "parent", Heist_Contr
 local CLASSIC_CUT = menu.add_feature("» 你的分红", "parent", CLASSIC_HEISTS.id)
 local LS_ROBBERY = menu.add_feature("» 改装铺抢劫", "parent", Heist_Control.id)
 local MASTER_UNLOCKR = menu.add_feature("» 解锁大师", "parent", Heist_Control.id)
-local TOOLS = menu.add_feature("» 工具", "parent", Heist_Control.id)
+
+
 
 menu.add_feature("» 虎鲸 : 策划面板 [先呼出虎鲸]", "action", TELEPORT.id, function()
     menu.notify("如果你不呼出虎鲸就传送，你会出现BUG", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(1561.224,386.659,-49.685))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(1561.224,386.659,-49.685))
 end)
 
 menu.add_feature("» 虎鲸 : 主甲板 [先呼出虎鲸]", "action", TELEPORT.id, function()
     menu.notify("如果你不呼出虎鲸就传送，你会出现BUG", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(1563.218,406.030,-49.667))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(1563.218,406.030,-49.667))
 end)
 
 menu.add_feature("» 排水管道 : 入口", "action", TELEPORT.id, function()
     menu.notify("传送到排水管道 : 入口", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(5044.726,-5816.164,-11.213))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(5044.726,-5816.164,-11.213))
 end)
 
 menu.add_feature("» 排水管道 : 第二个检查点", "action", TELEPORT.id, function()
     menu.notify("传送到排水管道 : 第二个检查点", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(5054.630,-5771.519,-4.807))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(5054.630,-5771.519,-4.807))
 end)
 
 menu.add_feature("» 主要目标", "action", TELEPORT.id, function()
     menu.notify("传送到 Main Target", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(5006.896,-5755.963,15.487))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(5006.896,-5755.963,15.487))
 end)
 
 menu.add_feature("» 次要目标房间", "action", TELEPORT.id, function()
     menu.notify("传送到 次要目标房间", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(5003.467,-5749.352,14.840))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(5003.467,-5749.352,14.840))
 end)
 
 menu.add_feature("» 金库（金发老大房间）", "action", TELEPORT.id, function()
     menu.notify("传送到 金库", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(5010.753,-5757.639,28.845))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(5010.753,-5757.639,28.845))
 end)
 
 menu.add_feature("» 大门出口", "action", TELEPORT.id, function()
     menu.notify("传送到 出口", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(4992.854,-5718.537,19.880))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(4992.854,-5718.537,19.880))
 end)
 
 menu.add_feature("» 海洋撤离点", "action", TELEPORT.id, function()
     menu.notify("传送到 海洋撤离点", "", 4, 0x64F06414)
-    pedmy = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(pedmy,v3(4771.792,-6166.055,-40.266))
+    my_ped = player.get_player_ped(player.player_id())
+    entity.set_entity_coords_no_offset(my_ped,v3(4771.792,-6166.055,-40.266))
 end)
 
 do
@@ -4452,6 +4907,28 @@ end
         if not bit.on then return end
     end
     end)
+--------------车友会1000级-----------------
+local main_cheyouhui=menu.add_feature(
+    "» 车友会解锁1000级",
+    "action",
+    TUNERS_DLC.id,
+    function()
+        stats.stat_set_int(gameplay.get_hash_key("MP0_CAR_CLUB_REP"), 997430, true)
+        stats.stat_set_int(gameplay.get_hash_key("MP1_CAR_CLUB_REP"), 997430, true)
+    end
+
+)
+
+local main_reset_cheyouhui=menu.add_feature(
+    "» 车友会重置1级",
+    "action",
+    TUNERS_DLC.id,
+    function()
+        stats.stat_set_int(gameplay.get_hash_key("MP0_CAR_CLUB_REP"), 0, true)
+        stats.stat_set_int(gameplay.get_hash_key("MP1_CAR_CLUB_REP"), 0, true)
+    end
+
+)
 
     menu.add_feature("» 暂时解锁未开放的套装", "action", TUNERS_DLC.id, function()
         menu.notify("斯普林克连体衣\nCola降落伞袋\nSprunk降落伞袋\n万圣节降落伞袋\nLos Santos海关T恤\nKnuckleduster T恤\nAmpage T恤", "", 15, 0x64F06414)
@@ -6025,12 +6502,15 @@ local BUNKR_UNLCK_B = {
 }
 
 local BNKR_AWARDS = menu.add_feature("» 解锁地堡奖励", "parent", MASTER_UNLOCKR.id)
-    menu.add_feature("» 外星蛋运货(彩蛋)", "action", BNKR_AWARDS.id, function()
+    menu.add_feature("» 外星蛋运货(彩蛋)", "toggle", BNKR_AWARDS.id, function(a)
     menu.notify("必须要在晚上9点到11点之间运货", "解锁大师", 3, 0x6414F0FF)
+    while a.on do
+        system.yield(0)
         for i = 1, #ALN_EG_MS do
             stat_set_int(ALN_EG_MS[i][1], true, ALN_EG_MS[i][2])
         end
-    end)
+    end
+end)
 
 menu.add_feature("» 解锁地堡奖杯", "action", BNKR_AWARDS.id, function()
 menu.notify("地堡奖杯已解锁", "解锁大师", 3, 0x64F06414)
@@ -6084,9 +6564,9 @@ local ORBT_CLDWN_ = {
 end
 -- Heist Cooldown Reminder
 do
-    local COOLDOWN_REMIND = menu.add_feature("» 抢劫冷却提醒", "parent", TOOLS.id)
+    local COOLDOWN_REMIND = menu.add_feature("抢劫冷却提醒", "parent", mission_cheat.id)
     
-    menu.add_feature("» 佩里科岛的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Cayo)
+    menu.add_feature("佩里科岛的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Cayo)
         menu.notify("- 计算佩里科岛接下来的15分钟\n\n- 完成抢劫或在地图上后立即激活\n\n-不要浪费时间，同时进行不同的抢劫:)\n\n- 每个抢劫的冷却时间是单独的", "(佩里科岛)", 15, 0x64F0FF14)
         system.wait(300000) do menu.notify("- 5分钟过去了\n\n- 还有10分钟的冷却\n\n- 您将很快收到另一条通知", "(佩里科岛)", 10, 0x64F06E14)
         system.wait(300000) do menu.notify("- 10分钟过去了\n\n- 还有5分钟的冷却\n\n- 您将很快收到另一条通知", "(佩里科岛)", 10, 0x64F06E14)
@@ -6095,7 +6575,7 @@ do
         menu.notify("抢劫冷却提醒已被禁用...", "", 5, 0x64781EF0)
     end)
     
-    menu.add_feature("» 名钻赌场的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Casino)
+    menu.add_feature("名钻赌场的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Casino)
         menu.notify("- 计算名钻赌场的接下来的15分钟\n\n- 完成抢劫或在地图上后立即激活\n\n- 不要浪费时间，同时进行不同的抢劫:)\n\n- 每个抢劫的冷却时间是单独的", "(名钻赌场)", 15, 0x64F0FF14)
         system.wait(300000) do menu.notify("- 5分钟过去了\n\n- 还有10分钟的冷却\n\n- 您将很快收到另一条通知", "(名钻赌场)", 10, 0x64F06E14)
         system.wait(300000) do menu.notify("- 10分钟过去了\n\n- 还有5分钟的冷却\n\n- 您将很快收到另一条通知", "(名钻赌场)", 10, 0x64F06E14)
@@ -6104,7 +6584,7 @@ do
         menu.notify("抢劫冷却提醒已被禁用...", "", 5, 0x64781EF0)
     end)
     
-    menu.add_feature("» 末日豪劫的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Dooms)
+    menu.add_feature("末日豪劫的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Dooms)
         menu.notify("- 计算末日豪劫接下来的15分钟\n\n- 完成抢劫或在地图上后立即激活\n\n- 不要浪费时间，同时进行不同的抢劫:)\n\n- 每个抢劫的冷却时间是单独的", "(末日豪劫)", 15, 0x64F0FF14)
         system.wait(300000) do menu.notify("- 5分钟过去了\n\n- 还有10分钟的冷却\n\n- 您将很快收到另一条通知", "(末日豪劫)", 10, 0x64F06E14)
         system.wait(300000) do menu.notify("- 10分钟过去了\n\n- 还有5分钟的冷却\n\n- 您将很快收到另一条通知", "(末日豪劫)", 10, 0x64F06E14)
@@ -6113,7 +6593,7 @@ do
         menu.notify("抢劫冷却提醒已被禁用...", "", 5, 0x64781EF0)
     end)
     
-    menu.add_feature("» 公寓抢劫的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Classic)
+    menu.add_feature("公寓抢劫的提醒", "action",COOLDOWN_REMIND.id,function(HCR_Classic)
         menu.notify("- 计算公寓抢劫的接下来15分钟\n\n- 完成抢劫或在地图上后立即激活\n\n- 不要浪费时间，同时进行不同的抢劫:)\n\n- 每个抢劫的冷却时间是单独的", "(公寓抢劫)", 15, 0x64F0FF14)
         system.wait(300000) do menu.notify("- 5分钟过去了\n\n- 还有10分钟的冷却\n\n- 您将很快收到另一条通知", "(公寓抢劫)", 10, 0x64F06E14)
         system.wait(300000) do menu.notify("- 10分钟过去了\n\n- 还有5分钟的冷却\n\n- 您将很快收到另一条通知", "(公寓抢劫)", 10, 0x64F06E14)
@@ -6122,7 +6602,7 @@ do
         menu.notify("抢劫冷却提醒已被禁用...", "", 5, 0x64781EF0)
     end)
     
-    menu.add_feature("» 车友会抢劫的提醒", "action",COOLDOWN_REMIND.id,function(HCR_LS)
+    menu.add_feature("车友会抢劫的提醒", "action",COOLDOWN_REMIND.id,function(HCR_LS)
         menu.notify("- 计算车友会抢劫接下来的15分钟\n\n- 完成抢劫或在地图上后立即激活\n\n- 不要浪费时间，同时进行不同的抢劫:)\n\n- 每个抢劫的冷却时间是单独的", "(LS Robbery - Contracts)", 15, 0x64F0FF14)
         system.wait(300000) do menu.notify("- 5分钟过去了\n\n- 还有10分钟的冷却\n\n- 您将很快收到另一条通知", "(车友会抢劫)", 10, 0x64F06E14)
         system.wait(300000) do menu.notify("- 10分钟过去了\n\n- 还有5分钟的冷却\n\n- 您将很快收到另一条通知", "(车友会抢劫)", 10, 0x64F06E14)
@@ -6133,10 +6613,16 @@ do
     end
     
 do
-    menu.add_feature("» 离开战局卡单 (冻结游戏一段时间)", "action", TOOLS.id, function()
+    menu.add_feature("离开战局卡单 (冻结游戏一段时间)", "action", mission_cheat.id, function()
     menu.notify("完成", "任务大师", 3, 0x6400FA14)
         local time = utils.time_ms() + 8500
         while time > utils.time_ms() do end
     end)
 end
+
+
+
+
+
+
 ----------------------------抢劫-------------------------

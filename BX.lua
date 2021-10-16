@@ -7065,7 +7065,7 @@ local ALN_EG_MS = {
 }
 local BNKR_AWARDS = menu.add_feature("» 解锁地堡奖励", "parent", MASTER_UNLOCKR.id)
     menu.add_feature("外星蛋运货(彩蛋)", "toggle", mission_cheat.id, function(a)
-    menu.notify("去地堡拉货即可\n感谢群友老爷爷(79797672)提供的代码及思路", "解锁大师", 3, 0x6414F0FF)
+    menu.notify("去地堡拉货即可\n感谢群友老爷爷提供的代码及思路", "解锁大师", 3, 0x6414F0FF)
     menu.notify("2T玩家交流群：872986398\n买科技加群775255063", "解锁大师", 3, 0x6414F0FF)
     if a.on then
         system.yield(0)

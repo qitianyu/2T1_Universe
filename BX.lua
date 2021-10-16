@@ -17,7 +17,7 @@ login_start=true
 -----------------------------
 
 
-
+local anti_sync=player.add_modder_flag("BX's Anti-Sync")
 
 local main=menu.add_feature("BX_SYSTEM","parent",0)
 --------------整合其他LUA必备库（方法）---------------
@@ -33,6 +33,12 @@ local Pedweapon = function()
     return ped.get_current_ped_weapon(Myped())
 end
 local all_ped=ped.get_all_peds()
+
+-- local function max_all_weapons()
+--     for i, weapon_hash in pairs(weapon.get_all_weapon_hashes()) do
+--         weapon_mapper.set_ped_weapon_attachments(player.get_player_ped(player.player_id()), false, weapon_hash)
+--     end
+-- end
 -----------------抢主机 functions from KEK‘s authorization--------------------
 local script_event_hashes = {
     ["Netbail kick"] = 2092565704,
@@ -188,8 +194,8 @@ local main_about=menu.add_feature(
     main.id,
     function ()
     -----------------严禁修改此处----------------------------
-        ui.notify_above_map("~b~BX_SYSTEM\n欢迎使用BX整合v0.4\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用BX整合",0)
-        ui.notify_above_map("~b~BX_SYSTEM\n~r~本LUA部分函数已获KEK授权","欢迎使用BX整合",0)
+        ui.notify_above_map("~b~BX_SYSTEM\n欢迎使用BX整合v0.5\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用BX整合",0)
+        menu.notify("BX_SYSTEM\n本LUA部分函数已获KEK授权","欢迎使用BX整合v0.5",6)
         ui.notify_above_map("~b~BX_SYSTEM\n本LUA开源地址\n~y~https://github.com/BaiXinSpuer/2T1_BX_MIX","欢迎使用BX整合",0)
     -----------------严禁修改此处---------------------------- 
 end)
@@ -202,9 +208,92 @@ local main_net_all=menu.add_feature("全体成员","parent",main_network.id)
 local mission_cheat=menu.add_feature("» 辅助功能","parent",Heist_Control.id)
 
 
-
+local main_title_info={
+    "|",
+    "|Θ",
+    "B",
+    "B\\",
+    "B\\/",
+    "BX",
+    "BX-",
+    "BX_",
+    "BX_$",
+    "BX_$^",
+    "BX_S",
+    "BX_S\\",
+    "BX_S\\/",
+    "BX_S\\/|",
+    "BX_SY",
+    "BX_SY$",
+    "BX_SY$^",
+    "BX_SYS",
+    "BX_SYS-",
+    "BX_SYS-|",
+    "BX_SYST",
+    "BX_SYST|",
+    "BX_SYST|-",
+    "BX_SYST|--",
+    "BX_SYST|--_",
+    "BX_SYSTE",
+    "BX_SYSTE^",
+    "BX_SYSTE^^",
+    "BX_SYSTEM",
+    "BX_SYSTE^^",
+    "BX_SYSTE^",
+    "BX_SYSTE",
+    "BX_SYST|--_",
+    "BX_SYST|--",
+    "BX_SYST|-",
+    "BX_SYST|",
+    "BX_SYST",
+    "BX_SYS-|",
+    "BX_SYS-",
+    "BX_SYS",
+    "BX_SY$^",
+    "BX_SY$",
+    "BX_SY",
+    "BX_S\\/|",
+    "BX_S\\/",
+    "BX_S\\",
+    "BX_S",
+    "BX_$^",
+    "BX_$",
+    "BX_",
+    "BX-",
+    "BX",
+    "B\\/",
+    "B\\",
+    "B",
+    "|Θ",
+    "|"
+}
 
 ----------------------------on_start----------------------------
+local main_title=menu.add_feature(
+    "动态组名",
+    "toggle",
+    main_options.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            if a.on then
+                for i=1, #main_title_info do
+                    if a.on then
+                        main.name=main_title_info[i]
+                        system.yield(150)
+                    else
+                        main.name='BX_SYSTEM'
+                    end
+                end
+            else
+                main.name='BX_SYSTEM'
+            end
+        end
+    end
+)
+main_title.threaded=true
+main_title.hidden=true
+
 
 local on_start_text=menu.add_feature(
     "这是你看不见的",
@@ -212,6 +301,7 @@ local on_start_text=menu.add_feature(
     main.id,
     function(a)
         local i=0
+        
         while a.on do
             system.yield(0)
             ui.set_text_color(i*10,i*2,100-i, 255)				
@@ -220,28 +310,49 @@ local on_start_text=menu.add_feature(
             ui.set_text_centre(true)
             ui.set_text_outline(true)
             ui.draw_text("欢迎使用\nBX整合",v2(0.5,0.3))
-            i=i+20
+            i=i+10
         end
     end
 )
 on_start_text.hidden=true
 on_start_text.threaded=true
+local skills={
+    "搞人",
+    "撒钱",
+    "挣钱",
+    "友好对待他人",
+    "活着",
+    "崩人",
+    "踢出玩家",
+    "钓鱼",
+    "骂人",
+    "抢劫",
+    "赌场"
+}
+
+
 local on_start_end=menu.add_feature(
     "这是你看不见的",
     "toggle",
     main.id,
     function(a)
-        i=255
+        local month=os.date("%m")
+        local today=os.date("%d")
+        local date=month..'月'..today..'日'
+        local i=255
+        local x=0
+        local randomthing=math.random(1,#skills)
+        main_title.on=true
         while a.on and i>0 do
             system.yield(0)
-            ui.set_text_color(255,255, 255, i)					
+            ui.set_text_color(100-x,x*10, x*10, i)					
             ui.set_text_scale(1)
             ui.set_text_font(0)
             ui.set_text_centre(true)
             ui.set_text_outline(true)
-            ui.draw_text("欢迎使用\nBX整合",v2(0.5,0.3))
-            -- ui.draw_text("BX整合",v2(0.45,0.5))
+            ui.draw_text("欢迎使用\nBX整合\n今天是"..date..'\n适宜'..skills[randomthing],v2(0.5,0.3))
             i=i-1
+            x=x+1
         end
     end
 )
@@ -280,11 +391,7 @@ local on_start=menu.add_feature(
     end
 )
 on_start.hidden=true
-if login_start then
-    on_start.on=true
-else
-    on_start=false
-end
+
 --------------------toggle_targets------------------------------
 
 ------------自我选项------------------
@@ -294,17 +401,128 @@ local health_cheat=menu.add_feature(
     ,"toggle",
     main_self.id,
     function(a)
-        if a.on then
-            local me = player.player_id()
-            local myid = player.get_player_ped(me)
-            ped.set_ped_max_health(myid,0)
-        else
-            local me = player.player_id()
-            local myid = player.get_player_ped(me)
-            ped.set_ped_max_health(myid,328)
+        while a.on do
+            system.yield(0)
+            if a.on then
+                local me = player.player_id()
+                local myid = player.get_player_ped(me)
+                ped.set_ped_max_health(myid,0)
+                ped.set_ped_health(myid,1000)
+            else
+                local me = player.player_id()
+                local myid = player.get_player_ped(me)
+                ped.set_ped_max_health(myid,328)
+                ped.set_ped_health(myid,328)
+            end
         end
     end
 )
+
+
+local show_time_go_back_info=menu.add_feature(
+    "这是个显示",
+    "toggle",
+    main_self.id,
+    function(a)
+        r,g,b=math.random(0,255),math.random(0,255), math.random(0,255)
+        while a.on do
+            system.yield(0)
+            if a.on then 
+                ui.set_text_color(r,g,b, 185)					
+                ui.set_text_scale(0.55)
+                ui.set_text_font(0)
+                ui.set_text_centre(true)
+                ui.set_text_outline(true)
+                ui.draw_text("你已开启时间折跃\n在时间折跃中\n你需要在两个地点之间不断传送",v2(0.5,0.3))
+            end
+        end
+    end
+)
+
+local show_time_go_back_info2=menu.add_feature(
+    "这是个显示",
+    "toggle",
+    main_self.id,
+    function(a)
+        r,g,b=math.random(0,255),math.random(0,255), math.random(0,255)
+        while a.on do
+            system.yield(0)
+            if a.on then
+                ui.set_text_color(r,g,b, 185)					
+                ui.set_text_scale(0.55)
+                ui.set_text_font(0)
+                ui.set_text_centre(true)
+                ui.set_text_outline(true)
+                ui.draw_text("每次传送间隔为15S\n你可以携带载具进行时间折跃\n将在8秒内开始",v2(0.5,0.5))
+            end
+        end
+    end
+)
+show_time_go_back_info.hidden=true
+show_time_go_back_info2.hidden=true
+show_time_go_back_info.threaded=true
+show_time_go_back_info2.threaded=true
+local time_go_back=menu.add_feature(
+    "时间折跃",
+    "toggle",
+    main_self.id,
+    function(a)
+        local me = player.player_id()
+        local new_pos=player.get_player_coords(me)
+        last_pos=new_pos
+        while a.on do
+            local me = player.player_id()
+            local my_ped=player.get_player_ped(me)
+            ui.notify_above_map("~r~请注意！\n时间折跃已开始！！","BX整合",6)
+            system.yield(5000)
+            ui.notify_above_map("~r~请注意！\n时间折跃已开始！！","BX整合",6)
+            system.yield(5000)
+            ui.notify_above_map("~r~请注意！\n时间折跃已开始！！","BX整合",6)
+            system.yield(5000)
+            if a.on then
+                local new_pos=player.get_player_coords(me)
+                if player.is_player_in_any_vehicle(me) then
+                    entity.set_entity_coords_no_offset(player.get_player_vehicle(me),last_pos)
+                else
+                    entity.set_entity_coords_no_offset(my_ped,last_pos)
+                end
+                last_pos=new_pos
+            end
+        end
+    end
+)
+time_go_back.hidden=true
+
+
+
+local time_go_back2=menu.add_feature(
+    "时间折跃",
+    "toggle",
+    main_self.id,
+    function(a)
+        if a.on then
+            show_time_go_back_info.on=true
+            show_time_go_back_info2.on=true
+            system.yield(8000)
+            if a.on then
+                show_time_go_back_info.on=false
+                show_time_go_back_info2.on=false
+                time_go_back.on=true
+            else
+                show_time_go_back_info2.on=false
+                show_time_go_back_info.on=false
+                time_go_back.on=false
+            end
+        else
+            show_time_go_back_info2.on=false
+            show_time_go_back_info.on=false
+            time_go_back.on=false
+        end
+    end
+)
+
+
+
 
 -----------在线玩家---------------
 
@@ -414,6 +632,9 @@ local killing_eye_v1=menu.add_feature(
     "toggle",
     main_self.id,
     function(a)
+        local me=player.player_id()
+        local my_ped=player.get_player_ped(me)
+        weapon.give_weapon_component_to_ped(my_ped,177293209,0x89EBDAA7)
         while a.on do
             system.yield(0)
             local me=player.player_id()
@@ -453,6 +674,9 @@ local killing_eye_v2=menu.add_feature(
     "toggle",
     main_self.id,
     function(a)
+        local me=player.player_id()
+        local my_ped=player.get_player_ped(me)
+        weapon.give_weapon_component_to_ped(my_ped,1432025498,0x3BE4465D)
         while a.on do
             system.yield(0)
             local me=player.player_id()
@@ -527,17 +751,130 @@ local killing_eye_v3=menu.add_feature(
 )
 
 -------------------------激光眼系列-------------------------------------
+local protect_shield=menu.add_feature(
+    "强光护盾",
+    "toggle",
+    main_self.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            gameplay.shoot_single_bullet_between_coords(player.get_player_coords(me)+v3(0,0,0.3), player.get_player_coords(me)-v3(0,0,0.3), 999999, 2939590305, my_ped, false, false, 10000)
+        end
+    end
+)
+
+local invis_shield=menu.add_feature(
+    "无光之盾(匿名栽赃)",
+    "toggle",
+    main_self.id,
+    function(a)
+        ui.notify_above_map("请确保无敌已经开启\n请确保战局里有其他非好友玩家","",0)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local pid=math.random(0,31)
+            local my_ped=player.get_player_ped(me)
+            ped.set_ped_health(my_ped,3280)
+            if pid~=me and player.is_player_valid(pid) and not player.is_player_friend(pid) then
+                fire.add_explosion(player.get_player_coords(me),8,false,true,0,player.get_player_ped(pid))
+            end
+            system.yield(0)
+            ped.set_ped_health(my_ped,328)
+        end
+    end
+)
+local invis_shield_v2=menu.add_feature(
+    "无光之盾(匿名)",
+    "toggle",
+    main_self.id,
+    function(a)
+        ui.notify_above_map("请确保无敌已经开启","",0)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            ped.set_ped_health(my_ped,3280)
+            fire.add_explosion(player.get_player_coords(me),8,false,true,0,me)
+            system.yield(0)
+            ped.set_ped_health(my_ped,328)
+        end
+    end
+)
+local invis_shield_v3=menu.add_feature(
+    "无光之盾",
+    "toggle",
+    main_self.id,
+    function(a)
+        ui.notify_above_map("请确保无敌已经开启","",0)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            ped.set_ped_health(my_ped,3280)
+            fire.add_explosion(player.get_player_coords(me),8,false,true,0,player.get_player_ped(me))
+            system.yield(0)
+            ped.set_ped_health(my_ped,328)
+        end
+    end
+)
+
+
+
+local fast_respawn=menu.add_feature(
+    "复活时归位",
+    "toggle",
+    main_self.id,
+    function(a)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            if ped.get_ped_health(my_ped)==0 then
+                local lastpos=player.get_player_coords(me)
+                c=0
+                while true do
+                    system.yield(0)
+                    entity.set_entity_coords_no_offset(my_ped,lastpos)
+                    if controls.is_control_pressed(0,32) or controls.is_control_pressed(0,34) or controls.is_control_pressed(0,33) or controls.is_control_pressed(0,35) or controls.is_control_pressed(0,21) or controls.is_control_pressed(0,114) or controls.is_control_pressed(0,142) or controls.is_control_pressed(0,143) then
+                        break
+                    end
+                    
+                end
+            end
+        end
+    end
+)
+
+
 
 --------------载具驾驶枪 Done----------------------
+local cross_hair = menu.add_feature(
+    "AN_get_aim_function",
+    "toggle",
+    main_weapon.id,
+    function(a)
+        if a.on then
+            ui.show_hud_component_this_frame(14)
+            return HANDLER_CONTINUE
+        end
+        return HANDLER_POP
+  end
+)
+cross_hair.hidden=true
 function fuck_NPC_car(veh)
     entity.set_entity_coords_no_offset(veh,v3(0,0,0))
+    ped.set_ped_health(veh,0)
     system.yield(0)
     local me=player.player_id()
     local my_ped=player.get_player_ped(me)
+    cross_hair.on=true
     local veh=player.get_entity_player_is_aiming_at(me)
     local hash=entity.get_entity_model_hash(veh)
     if streaming.is_model_a_vehicle(hash) then
         ped.set_ped_into_vehicle(my_ped,veh,-1)
+        cross_hair.on=false
     elseif streaming.is_model_a_ped(hash) then
         fuck_NPC_car(player.get_entity_player_is_aiming_at(me))
     end
@@ -548,9 +885,11 @@ function fuck_Player_car(veh)
     system.yield(0)
     local me=player.player_id()
     local my_ped=player.get_player_ped(me)
+    cross_hair.on=true
     local veh=player.get_entity_player_is_aiming_at(me)
     local hash=entity.get_entity_model_hash(veh)
     if streaming.is_model_a_vehicle(hash) then
+        cross_hair.on=false
         ped.set_ped_into_vehicle(my_ped,veh,-1)
     elseif ped.is_ped_a_player(veh) then
         fuck_Player_car(veh)
@@ -585,6 +924,37 @@ local vehicle_driver_weapon=menu.add_feature(
     end
 
 )
+
+
+
+
+
+-----------------绳索枪-----------------------------
+-- local rope_weapon=menu.add_feature(
+--     "绳索枪",
+--     "toggle",
+--     main_weapon.id,
+--     function(a)
+--         while a.on do
+--             system.yield(0)
+--             local me=player.player_id()
+--             local my_ped=player.get_player_ped(me)
+--             local rot=entity.get_entity_rotation(my_ped)
+--             fire.add_explosion(rot,0,false,false,0,my_ped)
+--         end
+--     end
+
+-- )
+
+
+
+
+
+
+
+
+
+
 
 ------------------快速射击 Done---------------------------
 ---------------------此处代码基于 revive---------------
@@ -709,7 +1079,6 @@ local ozark_title=menu.add_feature(
     function(a)
         local x=math.random(1,#ozark_titles)
         local lenth=#ozark_titles[x]*0.002+0.012
-        print(lenth)
         while a.on do
             system.yield(0)
             ui.draw_rect(0.001, 0.999, 4.5, 0.085, 0, 0, 0, 0)
@@ -731,6 +1100,87 @@ local ozark_title=menu.add_feature(
 
 
 
+
+
+
+
+
+
+local time_title=menu.add_feature(
+    "时间信息",
+    "toggle",
+    main_options.id,
+    function(a)
+        local r,g,b=math.random(0,255),math.random(0,255),math.random(0,255)
+        while a.on do
+            system.yield(0)
+            local date=os.date("%Y-%m-%d %H:%M:%S")
+            ui.draw_rect(0.001, 0.999, 4.5, 0.085, 0, 0, 0, 0)
+            ui.set_text_color(r,g,b, 255)				
+            ui.set_text_scale(0.5)
+            ui.set_text_font(1)
+            ui.set_text_centre(true)
+            ui.set_text_outline(true)
+            ui.draw_text(date,v2(0.8,0))
+        end
+    end
+
+
+)
+time_title.threaded=true
+time_title.hidden=true
+
+
+
+--主机列表
+-- local function(host_list,info,name)
+--     if host_list[1] then
+--         if info>host_list[1] then
+--             host_list[#host_list+1]=name
+--         end
+--     end
+
+-- local host_info=menu.add_feature(
+--     "主机列表排序",
+--     "toggle",
+--     main_options.id,
+--     function(a)
+--         while a.on do
+--             system.yield(0)
+--             local host_list={}
+--             for pid=0,31 do
+--                 if player.is_player_valid(pid) then
+--                     player_host_info=player.get_player_host_priority(pid)
+--                     player_name=player.get_player_name(pid)
+--                 end
+--             end
+--         end
+--     end
+-- )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 --------------------保护选项-------------------
 ----------------标记所有玩家 Done------------------
 local fuck_them=menu.add_feature(
@@ -743,13 +1193,13 @@ local fuck_them=menu.add_feature(
             if a.on then
                 for pid=0,31 do
                     if pid~=me and player.is_player_valid(pid) then
-                        player.set_player_as_modder(pid,1<<0x10)
+                        player.set_player_as_modder(pid,anti_sync)
                     end
                 end
             else
                 for pid=0,31 do
                     if pid~=me and player.is_player_valid(pid) then
-                        player.unset_player_as_modder(pid,1<<0x10)
+                        player.unset_player_as_modder(pid,anti_sync)
                     end
                 end
             end
@@ -778,14 +1228,14 @@ local fuck_myself=menu.add_feature(
                 gameplay.clear_area_of_cops(pos,1000,false)
                 for pid=0,31 do
                     if pid~=me and player.is_player_valid(pid) and a.on then
-                        player.set_player_as_modder(pid,1<<0x10)
+                        player.set_player_as_modder(pid,anti_sync)
                         player.set_player_visible_locally(pid,false)
                     end
                 end
             else
                 for pid=0,31 do
                     if pid~=me and player.is_player_valid(pid) then
-                        player.unset_player_as_modder(pid,1<<0x10)
+                        player.unset_player_as_modder(pid,anti_sync)
                         player.set_player_visible_locally(pid,true)
                     end
                 end
@@ -891,6 +1341,37 @@ local fuck_spectater=menu.add_feature(
                                     ui.set_text_outline(true)
                                     ui.draw_text(who_spec.." 正在观察 "..who,v2(0.5,0.96))
                 end
+            end
+        end
+    end
+
+)
+local Anti_spectater=menu.add_feature(
+    "反观察",
+    "toggle",
+    main_protect.id,
+    function(a)
+        local me=player.player_id()
+        local last_pos=player.get_player_coords(me)
+        while a.on do
+            system.yield(0)
+            local me=player.player_id()
+            local my_ped=player.get_player_ped(me)
+            local last_pos=player.get_player_coords(me)
+            if a.on then
+                for pid=0,31 do
+                    if player.is_player_spectating(ped.get_player_ped(pid)) and player.is_player_valid(pid) and pid~=me and network.get_player_player_is_spectating(ped.get_player_ped(pid))==me then
+                        local pos=player.get_player_coords(pid)
+                        entity.set_entity_coords_no_offset(my_ped,pos)
+                        local me=player.player_id()
+                        local my_ped=player.get_player_ped(me)
+                        entity.set_entity_coords_no_offset(my_ped,last_pos)
+                    end
+                end
+            else
+                local me=player.player_id()
+                local my_ped=player.get_player_ped(me)
+                entity.set_entity_coords_no_offset(my_ped,last_pos)
             end
         end
     end
@@ -1081,7 +1562,13 @@ local main_auto_skip=menu.add_feature(
         end
     end
 )
-
+menu.add_feature("清理通知", "toggle", mission_cheat.id, function(eff)
+    while eff.on do
+        ui.get_current_notification(ui.remove_notification(0))
+    if not eff.on then return end
+    system.wait(1)
+    end
+    end)
 
 
 
@@ -1114,10 +1601,8 @@ local Anti_NPC_Aim_Shoot=menu.add_feature(
             system.yield(0)
             all_peds=ped.get_all_peds()
             for i=1,#all_peds do
-                if not ped.is_ped_a_player(all_peds[i]) and ped.get_current_ped_weapon(all_peds[i]) then
-                    ped.set_ped_accuracy(all_peds[i],0)
-                    ped.set_ped_combat_ability(all_peds[i],0)
-                    ped.set_ped_combat_range(all_peds[i],0)
+                if not ped.is_ped_a_player(all_peds[i]) then
+                    ped.set_ped_can_switch_weapons(all_peds[i],false)
                     weapon.remove_all_ped_weapons(all_peds[i])
                     entity.freeze_entity(all_peds[i],true)
                 end
@@ -1126,14 +1611,19 @@ local Anti_NPC_Aim_Shoot=menu.add_feature(
     end
 )
 
+Anti_NPC_Aim_Shoot.threaded=true
 
 
 
 
+if login_start then
+    main.name='BX Loading...'
+    on_start.on=true
+else
+    on_start=false
+end
 
-
-
-
+time_title.on=true
 main_about.on=true
 is_host.on=true
 fuck_spectater.on=true
@@ -1363,7 +1853,13 @@ end)
 menu.add_feature("» 排水管道 : 入口", "action", TELEPORT.id, function()
     menu.notify("传送到排水管道 : 入口", "", 4, 0x64F06414)
     my_ped = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(my_ped,v3(5044.726,-5816.164,-11.213))
+    if player.is_player_in_any_vehicle ~= -1 then do
+        pedmy = player.get_player_vehicle(player.player_id())
+        entity.set_entity_coords_no_offset(pedmy,v3(5044.726,-5816.164,-11.213))
+        if player.is_player_in_any_vehicle ~= 0 then do
+        pedmy = player.get_player_ped(player.player_id())
+        entity.set_entity_coords_no_offset(pedmy,v3(5044.726,-5816.164,-11.213))
+        return HANDLER_POP end end end end
 end)
 
 menu.add_feature("» 排水管道 : 第二个检查点", "action", TELEPORT.id, function()
@@ -1398,8 +1894,13 @@ end)
 
 menu.add_feature("» 海洋撤离点", "action", TELEPORT.id, function()
     menu.notify("传送到 海洋撤离点", "", 4, 0x64F06414)
-    my_ped = player.get_player_ped(player.player_id())
-    entity.set_entity_coords_no_offset(my_ped,v3(4771.792,-6166.055,-40.266))
+    if player.is_player_in_any_vehicle ~= 1 then do
+        pedmy = player.get_player_vehicle(player.player_id())
+        entity.set_entity_coords_no_offset(pedmy,v3(4771.792,-6166.055,-40.266))
+        if player.is_player_in_any_vehicle ~= 0 then do
+        pedmy = player.get_player_ped(player.player_id())
+        entity.set_entity_coords_no_offset(pedmy,v3(4771.792,-6166.055,-40.266))
+        return end end end end
 end)
 
 do
@@ -1408,6 +1909,7 @@ end
 ---- AUTO (ALL PLAYERS) NO SECONDARY TARGET
 do
 local QUICK_SET_ANY = {
+    {"",},
     {"H4CNF_BS_GEN", 262143},
     {"H4CNF_BS_ENTR", 63},
     {"H4CNF_BS_ABIL", 63},
@@ -1417,7 +1919,7 @@ local QUICK_SET_ANY = {
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4CNF_APPROACH", -1},
+    {"H4CNF_APPROACH", 0xFFFFFFF},
     {"H4LOOT_CASH_I", 0},
     {"H4LOOT_CASH_C", 0},
     {"H4LOOT_WEED_I", 0},
@@ -1442,7 +1944,7 @@ local QUICK_SET_ANY = {
     {"H4LOOT_GOLD_C_SCOPED", 0},
     {"H4LOOT_PAINT_SCOPED", 0},
     {"H4CNF_TARGET", 5},
-    {"H4CNF_WEAPONS", 5},
+    {"H4CNF_WEAPONS", 1},
     {"H4_MISSIONS", 65283},
     {"H4_PROGRESS", 126823},
     {"H4_PLAYTHROUGH_STATUS", 5}
@@ -1470,6 +1972,7 @@ end
 --- CAYO AUTOMATED PRESET SOLO PLAYERS
 do
 local AUTO_SOLO_SAPPHIRE_HARD = {
+    {"",},
     {"H4CNF_TARGET", 5},
     {"H4LOOT_CASH_I", 5551206},
     {"H4LOOT_CASH_I_SCOPED", 5551206},
@@ -1496,21 +1999,22 @@ local AUTO_SOLO_SAPPHIRE_HARD = {
     {"H4LOOT_WEED_V", 0},
         --
     {"H4_PROGRESS", 131055}, --hard
-    {"H4CNF_BS_GEN", 262143},
-    {"H4CNF_BS_ENTR", 63},
-    {"H4CNF_BS_ABIL", 63},
+    {"H4CNF_BS_GEN", 0xFFFFFFF},
+    {"H4CNF_BS_ENTR", 0xFFFFFFF},
+    {"H4CNF_BS_ABIL", 0xFFFFFFF},
     {"H4CNF_WEP_DISRP", 3},
     {"H4CNF_ARM_DISRP", 3},
     {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
+    {"H4CNF_APPROACH", 0xFFFFFFF}
 }
 
 local USER_CAN_MDFY_PRESET_AUTO_SPSOLO = {
-    {"H4CNF_BOLTCUT", 4424},
-    {"H4CNF_UNIFORM", 5256},
-    {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
+    {"",},
+    {"H4CNF_BOLTCUT", 0xFFFFFFF},
+    {"H4CNF_UNIFORM", 0xFFFFFFF},
+    {"H4CNF_GRAPPEL", 0xFFFFFFF},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_WEAPONS", 1},
     {"H4CNF_TROJAN", 5},
     {"H4_PLAYTHROUGH_STATUS", 100}
 }
@@ -1537,6 +2041,7 @@ end
 --- CAYO AUTOMATED PRESET SOLO PLAYERS
 do
 local AUTO_SOLO_RUBY_HARD = {
+    {"",},
     {"H4CNF_TARGET", 1},
     {"H4LOOT_CASH_I", 9208137},
     {"H4LOOT_CASH_I_SCOPED", 9208137},
@@ -1569,15 +2074,16 @@ local AUTO_SOLO_RUBY_HARD = {
     {"H4CNF_WEP_DISRP", 3},
     {"H4CNF_ARM_DISRP", 3},
     {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
+    {"H4CNF_APPROACH", 0xFFFFFFF}
 }
 
 local USER_CAN_MDFY_PRESET_AUTO_RNSOLO = {
+    {"",},
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_WEAPONS", 1},
     {"H4CNF_TROJAN", 5},
     {"H4_PLAYTHROUGH_STATUS", 100}
 }
@@ -1602,6 +2108,7 @@ end
 ----- AUTOMATED 2 PLAYERS
 do
 local AUTO_2PLAYERs_SAPPHIRE_NORMAL = {
+    {"",},
     {"H4CNF_TARGET", 5},
     {"H4LOOT_CASH_I", 2359448},
     {"H4LOOT_CASH_I_SCOPED", 2359448},
@@ -1634,14 +2141,15 @@ local AUTO_2PLAYERs_SAPPHIRE_NORMAL = {
     {"H4CNF_WEP_DISRP", 3},
     {"H4CNF_ARM_DISRP", 3},
     {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
+    {"H4CNF_APPROACH", 0xFFFFFFF}
 }
 local USER_CAN_MDFY_PRESET_AUTO_SPDUO = {
+    {"",},
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_WEAPONS", 1},
     {"H4CNF_TROJAN", 5},
     {"H4_PLAYTHROUGH_STATUS", 100}
 }
@@ -1668,6 +2176,7 @@ end
 --- AUTOMATED 2 RUBY
 do
 local AUTO_2PLAYERs_RUBY_NORMAL = {
+    {"",},
     {"H4CNF_TARGET", 1},
     {"H4LOOT_CASH_I", 9208137},
     {"H4LOOT_CASH_I_SCOPED", 9208137},
@@ -1700,14 +2209,15 @@ local AUTO_2PLAYERs_RUBY_NORMAL = {
     {"H4CNF_WEP_DISRP", 3},
     {"H4CNF_ARM_DISRP", 3},
     {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
+    {"H4CNF_APPROACH", 0xFFFFFFF}
 }
 local USER_CAN_MDFY_PRESET_AUTO_RBDUO = {
+    {"",},
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_WEAPONS", 1},
     {"H4CNF_TROJAN", 5},
     {"H4_PLAYTHROUGH_STATUS", 100}
 }
@@ -1734,6 +2244,7 @@ end
 do
 --- CAYO AUTOMATED PRESET 3 PLAYERS
 local AUTO_3PLAYERs_SAPPHIRE_NORMAL = {
+    {"",},
     {"H4CNF_TARGET", 5},
     {"H4LOOT_CASH_I", 2359448},
     {"H4LOOT_CASH_I_SCOPED", 2359448},
@@ -1766,14 +2277,15 @@ local AUTO_3PLAYERs_SAPPHIRE_NORMAL = {
     {"H4CNF_WEP_DISRP", 3},
     {"H4CNF_ARM_DISRP", 3},
     {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
+    {"H4CNF_APPROACH", 0xFFFFFFF}
 }
 local USER_CAN_MDFY_PRESET_AUTO_SPTRIO = {
+    {"",},
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_WEAPONS", 1},
     {"H4CNF_TROJAN", 5},
     {"H4_PLAYTHROUGH_STATUS", 100}
 }
@@ -1801,6 +2313,7 @@ end
 do
 --- CAYO AUTOMATED 3 PLAYERS RUBY
 local AUTO_3PLAYERs_RUBY_NORMAL = {
+    {"",},
     {"H4CNF_TARGET", 1},
     {"H4LOOT_CASH_I", 9208137},
     {"H4LOOT_CASH_I_SCOPED", 9208137},
@@ -1833,14 +2346,15 @@ local AUTO_3PLAYERs_RUBY_NORMAL = {
     {"H4CNF_WEP_DISRP", 3},
     {"H4CNF_ARM_DISRP", 3},
     {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
+    {"H4CNF_APPROACH", 0xFFFFFFF}
 }
 local USER_CAN_MDFY_PRESET_AUTO_RBTRIO = {
+    {"",},
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_WEAPONS", 1},
     {"H4CNF_TROJAN", 5},
     {"H4_PLAYTHROUGH_STATUS", 100}
 }
@@ -1867,50 +2381,52 @@ end
 
 --- CAYO AUTOMATED PRESET 4 PLAYERS
 do
-local AUTO_4PLAYERs_SAPPHIRE_NORMAL = {
-    {"H4CNF_TARGET", 5},
-    {"H4LOOT_CASH_I", 2359448},
-    {"H4LOOT_CASH_I_SCOPED", 2359448},
-    {"H4LOOT_CASH_C", 0},
-    {"H4LOOT_CASH_C_SCOPED", 0},
-    {"H4LOOT_COKE_I", 4901222},
-    {"H4LOOT_COKE_I_SCOPED", 4901222},
-    {"H4LOOT_COKE_C", 0},
-    {"H4LOOT_COKE_C_SCOPED", 0},
-    {"H4LOOT_GOLD_I", 0},
-    {"H4LOOT_GOLD_I_SCOPED", 0},
-    {"H4LOOT_GOLD_C", 255},
-    {"H4LOOT_GOLD_C_SCOPED", 255},
-    {"H4LOOT_WEED_I", 0},
-    {"H4LOOT_WEED_I_SCOPED", 0},
-    {"H4LOOT_WEED_C", 0},
-    {"H4LOOT_WEED_C_SCOPED", 0},
-    {"H4LOOT_PAINT", 127},
-    {"H4LOOT_PAINT_SCOPED", 127},
-    {"H4LOOT_CASH_V", 599431},
-    {"H4LOOT_COKE_V", 1198863},
-    {"H4LOOT_GOLD_V", 1598484},
-    {"H4LOOT_PAINT_V", 1198863},
-    {"H4LOOT_WEED_V", 0},
-        --
-    {"H4_PROGRESS", 126823},
-    {"H4CNF_BS_GEN", 262143},
-    {"H4CNF_BS_ENTR", 63},
-    {"H4CNF_BS_ABIL", 63},
-    {"H4CNF_WEP_DISRP", 3},
-    {"H4CNF_ARM_DISRP", 3},
-    {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
-}
-local USER_CAN_MDFY_PRESET_AUTO_SPQUAD = {
-    {"H4CNF_BOLTCUT", 4424},
-    {"H4CNF_UNIFORM", 5256},
-    {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
-    {"H4CNF_TROJAN", 5},
-    {"H4_PLAYTHROUGH_STATUS", 100}
-}
+    local AUTO_4PLAYERs_SAPPHIRE_NORMAL = {
+        {"",},
+        {"H4CNF_TARGET", 5},
+        {"H4LOOT_CASH_I", 2359448},
+        {"H4LOOT_CASH_I_SCOPED", 2359448},
+        {"H4LOOT_CASH_C", 0},
+        {"H4LOOT_CASH_C_SCOPED", 0},
+        {"H4LOOT_COKE_I", 4901222},
+        {"H4LOOT_COKE_I_SCOPED", 4901222},
+        {"H4LOOT_COKE_C", 0},
+        {"H4LOOT_COKE_C_SCOPED", 0},
+        {"H4LOOT_GOLD_I", 0},
+        {"H4LOOT_GOLD_I_SCOPED", 0},
+        {"H4LOOT_GOLD_C", 255},
+        {"H4LOOT_GOLD_C_SCOPED", 255},
+        {"H4LOOT_WEED_I", 0},
+        {"H4LOOT_WEED_I_SCOPED", 0},
+        {"H4LOOT_WEED_C", 0},
+        {"H4LOOT_WEED_C_SCOPED", 0},
+        {"H4LOOT_PAINT", 127},
+        {"H4LOOT_PAINT_SCOPED", 127},
+        {"H4LOOT_CASH_V", 599431},
+        {"H4LOOT_COKE_V", 1198863},
+        {"H4LOOT_GOLD_V", 1598484},
+        {"H4LOOT_PAINT_V", 1198863},
+        {"H4LOOT_WEED_V", 0},
+            --
+        {"H4_PROGRESS", 126823},
+        {"H4CNF_BS_GEN", 262143},
+        {"H4CNF_BS_ENTR", 63},
+        {"H4CNF_BS_ABIL", 63},
+        {"H4CNF_WEP_DISRP", 3},
+        {"H4CNF_ARM_DISRP", 3},
+        {"H4CNF_HEL_DISRP", 3},
+        {"H4CNF_APPROACH", 0xFFFFFFF}
+    }
+    local USER_CAN_MDFY_PRESET_AUTO_SPQUAD = {
+        {"",},
+        {"H4CNF_BOLTCUT", 4424},
+        {"H4CNF_UNIFORM", 5256},
+        {"H4CNF_GRAPPEL", 5156},
+        {"H4_MISSIONS", 0xFFFFFFF},
+        {"H4CNF_WEAPONS", 1},
+        {"H4CNF_TROJAN", 5},
+        {"H4_PLAYTHROUGH_STATUS", 100}
+    }
 menu.add_feature("» 蓝宝石豹", "toggle", AUTOMATED_4P.id, function(AUTO_4_SAPH_var0)
     menu.notify("为4名玩家添加的预设\n-不使用任何高级选项\n-不使用包修改器\n-不更改脚本设置的百分比\n-只需播放:)\n\n将其激活，直到抢劫结束。", "佩里科岛4人 | 蓝宝石豹", 7, 0xffcc63a6)
     for i = 1, #USER_CAN_MDFY_PRESET_AUTO_SPQUAD do
@@ -1936,6 +2452,7 @@ end
 --- CAYO AUTOMATED PRESET 4 PLAYERS RUBY
 do
 local AUTO_4PLAYERs_RUBY_NORMAL = {
+    {"",},
     {"H4CNF_TARGET", 1},
     {"H4LOOT_CASH_I", 9208137},
     {"H4LOOT_CASH_I_SCOPED", 9208137},
@@ -1960,7 +2477,7 @@ local AUTO_4PLAYERs_RUBY_NORMAL = {
     {"H4LOOT_GOLD_V", 1748484},
     {"H4LOOT_PAINT_V", 1311363},
     {"H4LOOT_WEED_V", 1049090},
-    --
+     --
     {"H4_PROGRESS", 126823},
     {"H4CNF_BS_GEN", 262143},
     {"H4CNF_BS_ENTR", 63},
@@ -1968,14 +2485,15 @@ local AUTO_4PLAYERs_RUBY_NORMAL = {
     {"H4CNF_WEP_DISRP", 3},
     {"H4CNF_ARM_DISRP", 3},
     {"H4CNF_HEL_DISRP", 3},
-    {"H4CNF_APPROACH", -1}
+    {"H4CNF_APPROACH", 0xFFFFFFF}
 }
 local USER_CAN_MDFY_PRESET_AUTO_RBQUAD = {
+    {"",},
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_WEAPONS", 5},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_WEAPONS", 1},
     {"H4CNF_TROJAN", 5},
     {"H4_PLAYTHROUGH_STATUS", 100}
 }
@@ -2004,6 +2522,7 @@ end
 ---- STANDARD SET
 do
 local STANDARD_PRSET = {
+    {"",},
     {"H4CNF_BS_GEN", 262143},
     {"H4CNF_BS_ENTR", 63},
     {"H4CNF_BS_ABIL", 63},
@@ -2013,7 +2532,7 @@ local STANDARD_PRSET = {
     {"H4CNF_BOLTCUT", 4424},
     {"H4CNF_UNIFORM", 5256},
     {"H4CNF_GRAPPEL", 5156},
-    {"H4CNF_APPROACH", -1},
+    {"H4CNF_APPROACH", 0xFFFFFFF},
     {"H4LOOT_CASH_I", 1089792},
     {"H4LOOT_CASH_C", 0},
     {"H4LOOT_WEED_I", 9114214},
@@ -2038,7 +2557,7 @@ local STANDARD_PRSET = {
     {"H4LOOT_GOLD_I_SCOPED", 0},
     {"H4LOOT_GOLD_C_SCOPED", 192},
     {"H4LOOT_PAINT_SCOPED", 127},
-    {"H4_MISSIONS", 65535},
+    {"H4_MISSIONS", 0xFFFFFFF},
     {"H4_PLAYTHROUGH_STATUS", 5}
 }
 local RANDOM_TARGET = {
@@ -2057,8 +2576,12 @@ end)
 end
 ------- ADVANCED FEATURES CAYO
 
-menu.add_feature("0%", "action", PERICO_HOST_CUT.id, function()
+menu.add_feature("0%", "toggle", PERICO_HOST_CUT.id, function(prio)
+    while prio.on do
         script.set_global_i(1711169,0)
+        if not prio.on then return end
+        system.wait(0)
+    end
 end)
 
 menu.add_feature("100%", "action", PERICO_HOST_CUT.id, function()
@@ -2239,7 +2762,7 @@ end
 
 do
 local CP_VEH_ALL = {
-    {"H4_MISSIONS", 65535}
+    {"H4_MISSIONS", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁所有接近载具", "action", CAYO_VEHICLES.id, function()
     menu.notify("所有载具已生效", "任务大师", 3, 0xffef5a09)
@@ -2358,8 +2881,8 @@ end
 
 do
 local SecondaryT_FCash = {
-    {"H4LOOT_CASH_I", -1},
-    {"H4LOOT_CASH_C", -1},
+    {"H4LOOT_CASH_I", 0xFFFFFFF},
+    {"H4LOOT_CASH_C", 0xFFFFFFF},
     {"H4LOOT_CASH_V", 90000},
     {"H4LOOT_WEED_I", 0},
     {"H4LOOT_WEED_C", 0},
@@ -2372,8 +2895,8 @@ local SecondaryT_FCash = {
     {"H4LOOT_GOLD_V", 0},
     {"H4LOOT_PAINT", 127},
     {"H4LOOT_PAINT_V", 190000},
-    {"H4LOOT_CASH_I_SCOPED", -1},
-    {"H4LOOT_CASH_C_SCOPED", -1},
+    {"H4LOOT_CASH_I_SCOPED", 0xFFFFFFF},
+    {"H4LOOT_CASH_C_SCOPED", 0xFFFFFFF},
     {"H4LOOT_WEED_I_SCOPED", 0},
     {"H4LOOT_WEED_C_SCOPED", 0},    
     {"H4LOOT_COKE_I_SCOPED", 0},
@@ -2395,8 +2918,8 @@ local SecondaryT_FWeed = {
     {"H4LOOT_CASH_I", 0},
     {"H4LOOT_CASH_C", 0},
     {"H4LOOT_CASH_V", 0},
-    {"H4LOOT_WEED_I", -1},
-    {"H4LOOT_WEED_C", -1},
+    {"H4LOOT_WEED_I", 0xFFFFFFF},
+    {"H4LOOT_WEED_C", 0xFFFFFFF},
     {"H4LOOT_WEED_V", 140000},
     {"H4LOOT_COKE_I", 0},
     {"H4LOOT_COKE_C", 0},
@@ -2408,8 +2931,8 @@ local SecondaryT_FWeed = {
     {"H4LOOT_PAINT_V", 190000},
     {"H4LOOT_CASH_I_SCOPED", 0},
     {"H4LOOT_CASH_C_SCOPED", 0},
-    {"H4LOOT_WEED_I_SCOPED", -1},
-    {"H4LOOT_WEED_C_SCOPED", -1},    
+    {"H4LOOT_WEED_I_SCOPED", 0xFFFFFFF},
+    {"H4LOOT_WEED_C_SCOPED", 0xFFFFFFF},    
     {"H4LOOT_COKE_I_SCOPED", 0},
     {"H4LOOT_COKE_C_SCOPED", 0},
     {"H4LOOT_GOLD_I_SCOPED", 0},
@@ -2432,8 +2955,8 @@ local SecondaryT_FCoke = {
     {"H4LOOT_WEED_I", 0},
     {"H4LOOT_WEED_C", 0},
     {"H4LOOT_WEED_V", 0},
-    {"H4LOOT_COKE_I", -1},
-    {"H4LOOT_COKE_C", -1},
+    {"H4LOOT_COKE_I", 0xFFFFFFF},
+    {"H4LOOT_COKE_C", 0xFFFFFFF},
     {"H4LOOT_COKE_V", 210000},
     {"H4LOOT_GOLD_I", 0},
     {"H4LOOT_GOLD_C", 0},
@@ -2444,8 +2967,8 @@ local SecondaryT_FCoke = {
     {"H4LOOT_CASH_C_SCOPED", 0},
     {"H4LOOT_WEED_I_SCOPED", 0},
     {"H4LOOT_WEED_C_SCOPED", 0},    
-    {"H4LOOT_COKE_I_SCOPED", -1},
-    {"H4LOOT_COKE_C_SCOPED", -1},
+    {"H4LOOT_COKE_I_SCOPED", 0xFFFFFFF},
+    {"H4LOOT_COKE_C_SCOPED", 0xFFFFFFF},
     {"H4LOOT_GOLD_I_SCOPED", 0},
     {"H4LOOT_GOLD_C_SCOPED", 0},
     {"H4LOOT_PAINT_SCOPED", 127}
@@ -2469,10 +2992,10 @@ local SecondaryT_FGold = {
     {"H4LOOT_COKE_I", 0},
     {"H4LOOT_COKE_C", 0},
     {"H4LOOT_COKE_V", 0},
-    {"H4LOOT_GOLD_I", -1},
-    {"H4LOOT_GOLD_C", -1},
+    {"H4LOOT_GOLD_I", 0xFFFFFFF},
+    {"H4LOOT_GOLD_C", 0xFFFFFFF},
     {"H4LOOT_GOLD_V", 320000},
-    {"H4LOOT_PAINT", -1},
+    {"H4LOOT_PAINT", 0xFFFFFFF},
     {"H4LOOT_PAINT_V", 190000},
     {"H4LOOT_CASH_I_SCOPED", 0},
     {"H4LOOT_CASH_C_SCOPED", 0},
@@ -2480,9 +3003,9 @@ local SecondaryT_FGold = {
     {"H4LOOT_WEED_C_SCOPED", 0},    
     {"H4LOOT_COKE_I_SCOPED", 0},
     {"H4LOOT_COKE_C_SCOPED", 0},
-    {"H4LOOT_GOLD_I_SCOPED", -1},
-    {"H4LOOT_GOLD_C_SCOPED", -1},
-    {"H4LOOT_PAINT_SCOPED", -1}
+    {"H4LOOT_GOLD_I_SCOPED", 0xFFFFFFF},
+    {"H4LOOT_GOLD_C_SCOPED", 0xFFFFFFF},
+    {"H4LOOT_PAINT_SCOPED", 0xFFFFFFF},
 }
     menu.add_feature("» 黄金", "action", CAYO_SECONDARY.id, function()
     menu.notify("次要目标修改为黄金\n\n百分比和最终付款是随机的", "任务大师", 3, 0xffef5a09)
@@ -2529,21 +3052,21 @@ end
 local CAYO_COMPOUND = menu.add_feature("» 庄园战利品", "parent", CAYO_SECONDARY.id)
 
 do
-local Compound_LT_MIX = {
-    {"H4LOOT_CASH_C", 2},
-    {"H4LOOT_CASH_V", 474431},
-    {"H4LOOT_WEED_C", 17},
-    {"H4LOOT_WEED_V", 759090},
-    {"H4LOOT_COKE_C", 132},
-    {"H4LOOT_COKE_V", 948863},
-    {"H4LOOT_GOLD_C", 104},
-    {"H4LOOT_GOLD_V", 1265151},
+local Compound_LT_CASH = {
+    {"H4LOOT_CASH_C", 0xFFFFFFF},
+    {"H4LOOT_CASH_V", 90000},
+    {"H4LOOT_WEED_C", 0},
+    {"H4LOOT_WEED_V", 0},
+    {"H4LOOT_COKE_C", 0},
+    {"H4LOOT_COKE_V", 0},
+    {"H4LOOT_GOLD_C", 0},
+    {"H4LOOT_GOLD_V", 0},
     {"H4LOOT_PAINT", 127},
-    {"H4LOOT_PAINT_V", 948863},
-    {"H4LOOT_CASH_C_SCOPED", 2},
-    {"H4LOOT_WEED_C_SCOPED", 17},
-    {"H4LOOT_COKE_C_SCOPED", 132},
-    {"H4LOOT_GOLD_C_SCOPED", 104},
+    {"H4LOOT_PAINT_V", 190000},
+    {"H4LOOT_CASH_C_SCOPED", 0xFFFFFFF},
+    {"H4LOOT_WEED_C_SCOPED", 0},
+    {"H4LOOT_COKE_C_SCOPED", 0},
+    {"H4LOOT_GOLD_C_SCOPED", 0},
     {"H4LOOT_PAINT_SCOPED", 127}
 }
     menu.add_feature("» 混合战利品", "action", CAYO_COMPOUND.id, function()
@@ -2555,19 +3078,18 @@ local Compound_LT_MIX = {
 end
 
 do
-local Compound_LT_CASH = {
-    {"H4LOOT_CASH_C", -1},
-    {"H4LOOT_CASH_V", 90000},
-    {"H4LOOT_WEED_C", 0},
-    {"H4LOOT_WEED_V", 0},
+local Compound_LT_WEED = {
+    {"H4LOOT_CASH_C", 0},
+    {"H4LOOT_CASH_V", 0},
+    {"H4LOOT_WEED_C", 0xFFFFFFF},
+    {"H4LOOT_WEED_V", 140000},
     {"H4LOOT_COKE_C", 0},
     {"H4LOOT_COKE_V", 0},
     {"H4LOOT_GOLD_C", 0},
-    {"H4LOOT_GOLD_V", 0},
     {"H4LOOT_PAINT", 127},
     {"H4LOOT_PAINT_V", 190000},
-    {"H4LOOT_CASH_C_SCOPED", -1},
-    {"H4LOOT_WEED_C_SCOPED", 0},
+    {"H4LOOT_CASH_C_SCOPED", 0},
+    {"H4LOOT_WEED_C_SCOPED", 0xFFFFFFF},
     {"H4LOOT_COKE_C_SCOPED", 0},
     {"H4LOOT_GOLD_C_SCOPED", 0},
     {"H4LOOT_PAINT_SCOPED", 127}
@@ -2584,7 +3106,7 @@ do
 local Compound_LT_WEED = {
     {"H4LOOT_CASH_C", 0},
     {"H4LOOT_CASH_V", 0},
-    {"H4LOOT_WEED_C", -1},
+    {"H4LOOT_WEED_C", 0xFFFFFFF},
     {"H4LOOT_WEED_V", 140000},
     {"H4LOOT_COKE_C", 0},
     {"H4LOOT_COKE_V", 0},
@@ -2592,7 +3114,7 @@ local Compound_LT_WEED = {
     {"H4LOOT_PAINT", 127},
     {"H4LOOT_PAINT_V", 190000},
     {"H4LOOT_CASH_C_SCOPED", 0},
-    {"H4LOOT_WEED_C_SCOPED", -1},
+    {"H4LOOT_WEED_C_SCOPED", 0xFFFFFFF},
     {"H4LOOT_COKE_C_SCOPED", 0},
     {"H4LOOT_GOLD_C_SCOPED", 0},
     {"H4LOOT_PAINT_SCOPED", 127}
@@ -2611,14 +3133,14 @@ local Compound_LT_COKE = {
     {"H4LOOT_CASH_V", 0},
     {"H4LOOT_WEED_C", 0},
     {"H4LOOT_WEED_V", 0},
-    {"H4LOOT_COKE_C", -1},
+    {"H4LOOT_COKE_C", 0xFFFFFFF},
     {"H4LOOT_COKE_V", 210000},
     {"H4LOOT_GOLD_C", 0},
     {"H4LOOT_PAINT", 127},
     {"H4LOOT_PAINT_V", 190000},
     {"H4LOOT_CASH_C_SCOPED", 0},
     {"H4LOOT_WEED_C_SCOPED", 0},
-    {"H4LOOT_COKE_C_SCOPED", -1},
+    {"H4LOOT_COKE_C_SCOPED", 0xFFFFFFF},
     {"H4LOOT_GOLD_C_SCOPED", 0},
     {"H4LOOT_PAINT_SCOPED", 127}
 }
@@ -2638,11 +3160,11 @@ local Compound_LT_GOLD = {
     {"H4LOOT_WEED_V", 0},
     {"H4LOOT_COKE_C", 0},
     {"H4LOOT_COKE_V", 0},
-    {"H4LOOT_GOLD_C", -1},
+    {"H4LOOT_GOLD_C", 0xFFFFFFF},
     {"H4LOOT_GOLD_V", 320000},
     {"H4LOOT_PAINT", 127},
     {"H4LOOT_PAINT_V", 190000},
-    {"H4LOOT_GOLD_C_SCOPED", -1},
+    {"H4LOOT_GOLD_C_SCOPED", 0xFFFFFFF},
     {"H4LOOT_CASH_C_SCOPED", 0},
     {"H4LOOT_WEED_C_SCOPED", 0},
     {"H4LOOT_COKE_C_SCOPED", 0},
@@ -2947,7 +3469,7 @@ local CP_AWRD_IT = {
     {"AWD_MOODYMANN", 1800000},
     {"AWD_FILL_YOUR_BAGS", 1000000000},
     {"AWD_WELL_PREPARED", 80},
-    {"H4_H4_DJ_MISSIONS", 65535}
+    {"H4_H4_DJ_MISSIONS", 0xFFFFFFF}
 }
     menu.notify("佩里科岛奖杯已解锁！", "任务大师", 3, 0xffef5a09)
     for i = 1, #CP_AWRD_IT do
@@ -2962,8 +3484,9 @@ end
 do
 
 local COMPLETE_CP_MISSIONS = {
-    {"H4_MISSIONS", 65535},
-    {"H4CNF_APPROACH", -1},
+    {"",},
+    {"H4_MISSIONS", 0xFFFFFFF},
+    {"H4CNF_APPROACH", 0xFFFFFFF},
     {"H4CNF_BS_ENTR", 63},
     {"H4CNF_BS_GEN", 63},
     {"H4CNF_WEP_DISRP", 3},
@@ -3009,9 +3532,9 @@ end
 
 do
 local CLD_RMV = {
-    {"H4_COOLDOWN", -1},
-    {"H4_COOLDOWN_HARD", -1},
-    {"MPPLY_H4_COOLDOWN", -1}
+    {"H4_COOLDOWN", 0xFFFFFFF},
+    {"H4_COOLDOWN_HARD", 0xFFFFFFF},
+    {"MPPLY_H4_COOLDOWN", 0xFFFFFFF}
 }
     menu.add_feature("» 移除抢劫冷却", "action", MORE_OPTIONS.id, function()
     menu.notify("警告：这不针对服务器端的冷却去除\n\n请等待15分钟，以避免无法收到分红", "任务大师", 5, 0x641400E6)
@@ -3024,14 +3547,16 @@ end
 ---------------------- CASINO HEIST
 do
 local CH_RANDOM_PRST = {
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"CAS_HEIST_FLOW", 0xFFFFFFF},
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF},
     {"H3_LAST_APPROACH", 4},
-    {"H3OPT_POI", 1023},
-    {"H3OPT_ACCESSPOINTS", 2047},
-    {"H3OPT_BITSET1", -1},
+    {"H3OPT_BITSET1", 0xFFFFFFF},
     {"H3OPT_DISRUPTSHIP", 3},
     {"H3OPT_BODYARMORLVL", 3},
     {"H3OPT_KEYLEVELS", 2},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_BITSET0", 0xFFFFFFF}
 }
 local CH_RANDOM_METHOD = {
     {"H3OPT_TARGET", 0,3,0,3},
@@ -3048,32 +3573,36 @@ local CH_RANDOM_METHOD = {
     menu.notify("在使用此选项之前，请确保您已在计划屏幕上支付了启动费用\n\n随机预设已加载！", "任务大师", 3, 0x6414F0FF)
         for i = 1, #CH_RANDOM_PRST do
         stat_set_int(CH_RANDOM_PRST[i][1], true, CH_RANDOM_PRST[i][2])
+        stat_set_int(CH_RANDOM_PRST[i][1], false, CH_RANDOM_PRST[i][2])
+        end
         for i = 2, #CH_RANDOM_METHOD do
         stat_set_int(CH_RANDOM_METHOD[i][1], true, math.random(CH_RANDOM_METHOD[i][4], CH_RANDOM_METHOD[i][5]))
     end
 end
-end)
+)
 end
 
 do
 local CAH_SILENT_SNEAKY_HARD = {
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"CAS_HEIST_FLOW", 0xFFFFFFF},
     {"H3_LAST_APPROACH", 4},
     {"H3OPT_APPROACH", 1},
     {"H3_HARD_APPROACH", 1},
     {"H3OPT_TARGET", 3},
-    {"H3OPT_POI", 1023},
-    {"H3OPT_ACCESSPOINTS", 2047},
-    {"H3OPT_BITSET1", -1},
-    {"H3OPT_CREWWEAP", 2},
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF},
+    {"H3OPT_BITSET1", 0xFFFFFFF},
+    {"H3OPT_CREWWEAP", 4},
     {"H3OPT_CREWDRIVER", 5},
     {"H3OPT_CREWHACKER", 4},
-    {"H3OPT_WEAPS", 0},
-    {"H3OPT_VEHS", 3},
+    {"H3OPT_WEAPS", 1},
+    {"H3OPT_VEHS", 1},
     {"H3OPT_DISRUPTSHIP", 3},
     {"H3OPT_BODYARMORLVL", 3},
     {"H3OPT_KEYLEVELS", 2},
-    {"H3OPT_MASKS", 2},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_MASKS", 9},
+    {"H3OPT_BITSET0", 0xFFFFFFF}
 }
     menu.add_feature("» 隐迹潜踪(困难)", "action", CASINO_PRESETS.id, function()
     menu.notify("隐迹潜踪困难模式\n\n目标: 钻石\n载具: 埃弗隆\n车手: 切斯特·麦考伊\n\n武器: 步枪 + 霰弹枪\n枪手: 古斯塔沃·莫塔\n\n黑客: 阿维·施瓦茨曼\n未暴露: 3分30秒\n暴露: 2分26秒\n\n面具: 猎人系列", "任务大师", 6, 0x64F0AA14)
@@ -3085,23 +3614,25 @@ end
 
 do
 local CAH_SILENT_SNEAKY = {
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"CAS_HEIST_FLOW", 0xFFFFFFF},
     {"H3_LAST_APPROACH", 4},
     {"H3OPT_APPROACH", 1},
     {"H3_HARD_APPROACH", 0},
     {"H3OPT_TARGET", 3},
-    {"H3OPT_POI", 1023},
-    {"H3OPT_ACCESSPOINTS", 2047},
-    {"H3OPT_BITSET1", -1},
-    {"H3OPT_CREWWEAP", 2},
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF},
+    {"H3OPT_BITSET1", 0xFFFFFFF},
+    {"H3OPT_CREWWEAP", 4},
     {"H3OPT_CREWDRIVER", 5},
     {"H3OPT_CREWHACKER", 4},
-    {"H3OPT_WEAPS", 0},
-    {"H3OPT_VEHS", 3},
+    {"H3OPT_WEAPS", 1},
+    {"H3OPT_VEHS", 1},
     {"H3OPT_DISRUPTSHIP", 3},
     {"H3OPT_BODYARMORLVL", 3},
     {"H3OPT_KEYLEVELS", 2},
-    {"H3OPT_MASKS", 2},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_MASKS", 9},
+    {"H3OPT_BITSET0", 0xFFFFFFF}
 }
     menu.add_feature("» 隐迹潜踪 [普通]", "action", CASINO_PRESETS.id, function()
     menu.notify("隐迹潜踪普通难度\n\n目标: 钻石\n载具: 埃弗隆\nD车手: 切斯特·麦考伊\n\n武器: 步枪 + 霰弹枪\n枪手: 古斯塔沃·莫塔\n\n黑客: 阿维·施瓦茨曼\n未暴露: 3分30秒\n暴露: 2分26秒\n\n面具: 猎人系列", "任务大师", 6, 0x64F0AA14)
@@ -3113,23 +3644,25 @@ end
 
 do
 local CAH_BIG_CON_HARD = {
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"CAS_HEIST_FLOW", 0xFFFFFFF},
     {"H3_LAST_APPROACH", 4},
     {"H3OPT_APPROACH", 2},
     {"H3_HARD_APPROACH", 2},
     {"H3OPT_TARGET", 3},
-    {"H3OPT_POI", 1023},
-    {"H3OPT_ACCESSPOINTS", 2047},
-    {"H3OPT_BITSET1", -1},
-    {"H3OPT_CREWWEAP", 2},
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF},
+    {"H3OPT_BITSET1", 0xFFFFFFF},
+    {"H3OPT_CREWWEAP", 4},
     {"H3OPT_CREWDRIVER", 5},
     {"H3OPT_CREWHACKER", 4},
-    {"H3OPT_WEAPS", 0},
-    {"H3OPT_VEHS", 3},
+    {"H3OPT_WEAPS", 1},
+    {"H3OPT_VEHS", 1},
     {"H3OPT_DISRUPTSHIP", 3},
     {"H3OPT_BODYARMORLVL", 3},
     {"H3OPT_KEYLEVELS", 2},
-    {"H3OPT_MASKS", 2},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_MASKS", 9},
+    {"H3OPT_BITSET0", 0xFFFFFFF}
 }
     menu.add_feature("» 兵不厌诈[困难]", "action", CASINO_PRESETS.id, function()
     menu.notify("兵不厌诈困难模式\n\n目标: 钻石\n载具: 埃弗隆\n车手: 切斯特·麦考伊\n\n武器: 步枪 + 手枪\n枪手: 古斯塔沃·莫塔\n\n黑客: 阿维·施瓦茨曼\n未暴露: 3分30秒\n暴露: 2分26秒\n\n面具: 猎人系列", "任务大师", 6, 0x64F0AA14)
@@ -3141,23 +3674,28 @@ end
 
 do
 local CAH_BIG_CON = {
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"CAS_HEIST_FLOW", 0xFFFFFFF},
     {"H3_LAST_APPROACH", 4},
     {"H3OPT_APPROACH", 2},
     {"H3_HARD_APPROACH", 0},
     {"H3OPT_TARGET", 3},
-    {"H3OPT_POI", 1023},
-    {"H3OPT_ACCESSPOINTS", 2047},
-    {"H3OPT_BITSET1", -1},
-    {"H3OPT_CREWWEAP", 2},
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF},
+    {"H3OPT_BITSET1", 0xFFFFFFF},
+    {"H3OPT_CREWWEAP", 4},
     {"H3OPT_CREWDRIVER", 5},
     {"H3OPT_CREWHACKER", 4},
     {"H3OPT_WEAPS", 0},
-    {"H3OPT_VEHS", 3},
+    {"H3OPT_VEHS", 1},
     {"H3OPT_DISRUPTSHIP", 3},
     {"H3OPT_BODYARMORLVL", 3},
     {"H3OPT_KEYLEVELS", 2},
-    {"H3OPT_MASKS", 2},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_MASKS", 9},
+    {"H3OPT_BITSET0", 0xFFFFFFF}
+}
+local RAM_MASK_3 = {
+    {"H3OPT_MASKS", 1,12,12,1}
 }
     menu.add_feature("» 兵不厌诈[普通]", "action", CASINO_PRESETS.id, function()
     menu.notify("兵不厌诈普通模式n\n目标: 钻石\n载具: 埃弗隆\n车手: 切斯特·麦考伊\n\n武器: 步枪 + 手枪\n枪手: 古斯塔沃·莫塔\n\n黑客: 阿维·施瓦茨曼\n未暴露: 3分30秒\n暴露: 2分26秒\n\n面具: 猎人系列", "任务大师", 6, 0x64F0AA14)
@@ -3169,23 +3707,25 @@ end
 
 do
 local CAH_AGGRESSIVE_HARD = {
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"CAS_HEIST_FLOW", 0xFFFFFFF},
     {"H3_LAST_APPROACH", 4},
     {"H3OPT_APPROACH", 3},
     {"H3_HARD_APPROACH", 3},
     {"H3OPT_TARGET", 3},
-    {"H3OPT_POI", 1023},
-    {"H3OPT_ACCESSPOINTS", 2047},
-    {"H3OPT_BITSET1", -1},
-    {"H3OPT_CREWWEAP", 2},
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF},
+    {"H3OPT_BITSET1", 0xFFFFFFF},
+    {"H3OPT_CREWWEAP", 4},
     {"H3OPT_CREWDRIVER", 5},
     {"H3OPT_CREWHACKER", 4},
     {"H3OPT_WEAPS", 1},
-    {"H3OPT_VEHS", 3},
+    {"H3OPT_VEHS", 1},
     {"H3OPT_DISRUPTSHIP", 3},
     {"H3OPT_BODYARMORLVL", 3},
     {"H3OPT_KEYLEVELS", 2},
-    {"H3OPT_MASKS", 2},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_MASKS", 9},
+    {"H3OPT_BITSET0", 0xFFFFFFF}
 }
     menu.add_feature("» 气势汹汹[困难]", "action", CASINO_PRESETS.id, function()
     menu.notify("气势汹汹困难模式\n\n目标: 钻石\n载具: 埃弗隆\n车手: 切斯特·麦考伊\n\n武器: 冲锋枪 + 霰弹枪\n枪手: 古斯塔沃·莫塔\n\n黑客: 阿维·施瓦茨曼\n未暴露: 3分30秒\n暴露: 2分26秒\n\n面具: 猎人系列", "任务大师", 6, 0x64F0AA14)
@@ -3210,23 +3750,25 @@ end
 
 do
 local CAH_AGGRESSIVE = {
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"CAS_HEIST_FLOW", 0xFFFFFFF},
     {"H3_LAST_APPROACH", 4},
     {"H3OPT_APPROACH", 3},
     {"H3_HARD_APPROACH", 0},
     {"H3OPT_TARGET", 3},
-    {"H3OPT_POI", 1023},
-    {"H3OPT_ACCESSPOINTS", 2047},
-    {"H3OPT_BITSET1", -1},
-    {"H3OPT_CREWWEAP", 2},
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF},
+    {"H3OPT_BITSET1", 0xFFFFFFF},
+    {"H3OPT_CREWWEAP", 4},
     {"H3OPT_CREWDRIVER", 5},
     {"H3OPT_CREWHACKER", 4},
     {"H3OPT_WEAPS", 1},
-    {"H3OPT_VEHS", 3},
+    {"H3OPT_VEHS", 1},
     {"H3OPT_DISRUPTSHIP", 3},
     {"H3OPT_BODYARMORLVL", 3},
     {"H3OPT_KEYLEVELS", 2},
-    {"H3OPT_MASKS", 2},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_MASKS", 9},
+    {"H3OPT_BITSET0", 0xFFFFFFF}
 }
     menu.add_feature("» 气势汹汹[普通]", "action", CASINO_PRESETS.id, function()
     menu.notify("气势汹汹普通难度\n\n目标: 钻石\n载具: 埃弗隆\n车手: 切斯特·麦考伊\n\n武器: 冲锋枪 + 霰弹枪\n枪手: 古斯塔沃·莫塔\n\n黑客: 阿维·施瓦茨曼\n未暴露: 3分30秒\n暴露: 2分26秒\n\n面具: 猎人系列", "任务大师", 6, 0x64F0AA14)
@@ -3234,6 +3776,23 @@ local CAH_AGGRESSIVE = {
             stat_set_int(CAH_AGGRESSIVE[i][1], true, CAH_AGGRESSIVE[i][2])
         end
     end)
+end
+
+do
+local CH_UNLCK_PT = {
+    {"H3OPT_POI", 0xFFFFFFF},
+    {"H3OPT_ACCESSPOINTS", 0xFFFFFFF}
+}
+    menu.add_feature(
+        "» Unlock all Points of Interests & Access Points",
+        "action",
+        CASINO_BOARD1.id,
+        function()
+    menu.notify("Unlocked Successfully", "Heist Control", 3, 0x64FF7800)
+    for i = 1, #CH_UNLCK_PT do
+        stat_set_int(CH_UNLCK_PT[i][1], true, CH_UNLCK_PT[i][2])
+    end
+end)
 end
 
 do
@@ -3331,8 +3890,12 @@ end)
 
 do
 local CAH_PLAYER_HOST = menu.add_feature("» 你的分红", "parent", CAH_PLAYER_CUT.id)
-menu.add_feature("0 %", "action", CAH_PLAYER_HOST.id, function()
+menu.add_feature("0 %", "toggle", CAH_PLAYER_HOST.id, function(a)
+    while a.on do
     script.set_global_i(1703513 + 2326, 0)
+    if not a.on then return end
+    system.wait(0)
+    end
 end)
 
 menu.add_feature("35 %", "action", CAH_PLAYER_HOST.id, function()
@@ -3869,7 +4432,7 @@ local CASINO_MASK = menu.add_feature("» 选择面具", "parent", CASINO_BOARD2.
 
 do
 local CH_MASK_00 = {
-    {"H3OPT_MASKS", -1}
+    {"H3OPT_MASKS", 0xFFFFFFF}
 }
     menu.add_feature("» 去除面具", "action", CASINO_MASK.id, function()
     menu.notify("面具已去除", "任务大师", 2, 0x64F0AA14)
@@ -4068,8 +4631,8 @@ end
 
 do
 local CH_LOAD_BOARD_var0 = {
-    {"H3OPT_BITSET1", -1},
-    {"H3OPT_BITSET0", -1}
+    {"H3OPT_BITSET1", 0xFFFFFFF},
+    {"H3OPT_BITSET0", 0xFFFFFFF}
 }
 local CH_UNLOAD_BOARD_var1 = {
     {"H3OPT_BITSET1", 0},
@@ -4092,7 +4655,7 @@ end
 
 do
 local UNLCK_PATRICK = {
-    {"CAS_HEIST_FLOW", -1}
+    {"CAS_HEIST_FLOW", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁帕里克·麦克瑞利(隐藏黑客 10%分红)", "action", CASINO_MORE.id, function()
     menu.notify("成功解锁帕里克·麦克瑞利", "任务大师", 3, 0x64F06414)
@@ -4164,8 +4727,8 @@ local CH_AWRD_BL = {
     {"HELP_JB7002", true}
 }
 local CH_AWRD_IT = {
-    {"CH_ARC_CAB_CLAW_TROPHY", -1},
-    {"CH_ARC_CAB_LOVE_TROPHY", -1},
+    {"CH_ARC_CAB_CLAW_TROPHY", 0xFFFFFFF},
+    {"CH_ARC_CAB_LOVE_TROPHY", 0xFFFFFFF},
     {"SIGNAL_JAMMERS_COLLECTED", 50},
     {"AWD_ODD_JOBS", 52},
     {"AWD_PREPARATION", 40},
@@ -4180,10 +4743,10 @@ local CH_AWRD_IT = {
     {"AWD_MASTERFUL", 40000},
     {"VCM_FLOW_PROGRESS", 1839072},
     {"VCM_STORY_PROGRESS", 0},
-    {"H3_BOARD_DIALOGUE0", -1},
-    {"H3_BOARD_DIALOGUE1", -1},
-    {"H3_BOARD_DIALOGUE2", -1},
-    {"H3_VEHICLESUSED", -1}
+    {"H3_BOARD_DIALOGUE0", 0xFFFFFFF},
+    {"H3_BOARD_DIALOGUE1", 0xFFFFFFF},
+    {"H3_BOARD_DIALOGUE2", 0xFFFFFFF},
+    {"H3_VEHICLESUSED", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁赌场豪劫奖杯", "action", CASINO_MORE.id, function()
     menu.notify("成功解锁赌场豪劫奖杯", "任务大师", 3, 0x6400FA14)
@@ -4198,8 +4761,8 @@ end
 
 do
 local CLD_CH_RMV = {
-    {"H3_COMPLETEDPOSIX", -1},
-    {"MPPLY_H3_COOLDOWN", -1}
+    {"H3_COMPLETEDPOSIX", 0xFFFFFFF},
+    {"MPPLY_H3_COOLDOWN", 0xFFFFFFF}
 }
     menu.add_feature("» 重置抢劫冷却", "action", CASINO_MORE.id, function()
     menu.notify("这不会绕过服务器的冷却（可能无法拿到分红）", "任务大师", 3, 0x6414F0FF)
@@ -4492,7 +5055,7 @@ end)
 
 do
 local DD_H_ULCK = {
-    {"GANGOPS_HEIST_STATUS", -1},
+    {"GANGOPS_HEIST_STATUS", 0xFFFFFFF},
     {"GANGOPS_HEIST_STATUS", -229384}
 }
     menu.add_feature("» 解锁所有末日豪劫选项", "action", DOOMS_HEIST.id, function()
@@ -4505,7 +5068,7 @@ end
 
 do
 local DD_PREPS_DONE = {
-    {"GANGOPS_FM_MISSION_PROG", -1}
+    {"GANGOPS_FM_MISSION_PROG", 0xFFFFFFF}
 }
     menu.add_feature("» 完成所有准备任务(不是前置)", "action", DOOMS_HEIST.id, function()
         menu.notify("已完成所有准备任务", "任务大师", 3, 0x64F06414)
@@ -4530,8 +5093,8 @@ local DD_H_RST = {
     end
 do
     local DD_AWARDS_I = {
-    {"GANGOPS_FM_MISSION_PROG", -1},
-    {"GANGOPS_FLOW_MISSION_PROG", -1},
+    {"GANGOPS_FM_MISSION_PROG", 0xFFFFFFF},
+    {"GANGOPS_FLOW_MISSION_PROG", 0xFFFFFFF},
     {"MPPLY_GANGOPS_ALLINORDER", 100},
     {"MPPLY_GANGOPS_LOYALTY", 100},
     {"MPPLY_GANGOPS_CRIMMASMD", 100},
@@ -4585,7 +5148,7 @@ end
 -------- CLASSIC HEIST
 do
 local Apartment_SetDone = {
-    {"HEIST_PLANNING_STAGE", -1}
+    {"HEIST_PLANNING_STAGE", 0xFFFFFFF}
 }
     menu.add_feature("» 完成所有前置(先看过场)", "action", CLASSIC_HEISTS.id, function()
     for i = 1, #Apartment_SetDone do
@@ -4708,7 +5271,7 @@ local Apartment_AWD_B = {
     {"CR_PACIFIC_BIKES", 5000},
     {"CR_PACIFIC_CONVOY", 5000},
     {"CR_PACIFIC_FINALE", 5000},
-    {"MPPLY_HEIST_ACH_TRACKER", -1}
+    {"MPPLY_HEIST_ACH_TRACKER", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁所有公寓抢劫奖杯", "action", CLASSIC_HEISTS.id, function()
     menu.notify("解锁完成", "任务大师", 3, 0x6400FA14)
@@ -4856,7 +5419,7 @@ end
 
 do
 local LS_CONTRACT_MSS_ONLY = {
-    {"TUNER_GEN_BS", -1}
+    {"TUNER_GEN_BS", 0xFFFFFFF}
 }
     menu.add_feature("» 完成所有前置", "action", LS_ROBBERY.id, function()
     for i = 1, #LS_CONTRACT_MSS_ONLY do
@@ -4881,7 +5444,7 @@ end
 do
 local LS_CONTRACT_RST = {
     {"TUNER_GEN_BS", 8371},
-    {"TUNER_CURRENT", -1}
+    {"TUNER_CURRENT", 0xFFFFFFF}
 }
 menu.add_feature("» 重置合约", "action", LS_ROBBERY.id, function()
     for i = 1, #LS_CONTRACT_RST do
@@ -5005,7 +5568,7 @@ local LS_TUNERS_PRIZE_BL = {
 }
 --local LS_TUNERS_PRICE_IT = {
 --   {"CARMEET_PV_CHLLGE_PRGRSS",0},
---   {"CARMEET_PV_CHLLGE_POXIS", -1}
+--   {"CARMEET_PV_CHLLGE_POXIS", 0xFFFFFFF}
 --}
     menu.add_feature("» 解锁汽车批发价", "action", TUNERS_DLC.id, function()
         menu.notify("成功", "解锁大师", 4, 257818)
@@ -5626,8 +6189,8 @@ local ARENA_TOOL = menu.add_feature("» 竞技场战争 DLC", "parent", MASTER_U
 
 do
 local ARENA_W_UNLK = {
-    {"ARN_BS_TRINKET_TICKERS", -1},
-    {"ARN_BS_TRINKET_SAVED", -1},
+    {"ARN_BS_TRINKET_TICKERS", 0xFFFFFFF},
+    {"ARN_BS_TRINKET_SAVED", 0xFFFFFFF},
     {"AWD_WATCH_YOUR_STEP", 50},
     {"AWD_TOWER_OFFENSE", 50},
     {"AWD_READY_FOR_WAR", 50},
@@ -5853,7 +6416,7 @@ local NIGH_C_UNLK = {
     {"DANCETODIFFDJS", 4},
     {"NIGHTCLUB_HOTSPOT_TIME_MS", 3600000},
     {"NIGHTCLUB_CONT_TOTAL", 20},
-    {"NIGHTCLUB_CONT_MISSION", -1},
+    {"NIGHTCLUB_CONT_MISSION", 0xFFFFFFF},
     {"CLUB_CONTRABAND_MISSION", 1000},
     {"HUB_CONTRABAND_MISSION", 1000}
 }
@@ -5938,8 +6501,8 @@ do
     {"SCGW_NUM_WINS_GANG_1", 50},
     {"SCGW_NUM_WINS_GANG_2", 50},
     {"SCGW_NUM_WINS_GANG_3", 50},
-    {"CH_ARC_CAB_CLAW_TROPHY", -1},
-    {"CH_ARC_CAB_LOVE_TROPHY", -1},
+    {"CH_ARC_CAB_CLAW_TROPHY", 0xFFFFFFF},
+    {"CH_ARC_CAB_LOVE_TROPHY", 0xFFFFFFF},
     {"IAP_MAX_MOON_DIST", 2147483647},
     {"IAP_INITIALS_0", 50},
     {"IAP_INITIALS_1", 50},
@@ -6224,7 +6787,7 @@ end
 
 do
 local SHT_UNLK = {
-    {"CRDEADLINE", -1}
+    {"CRDEADLINE", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁圣太郎", "action", MASTER_UNLOCKR.id, function()
     menu.notify("圣太郎现在可以在传奇车店购买", "解锁大师", 3, 0x64F06414)
@@ -6298,7 +6861,7 @@ do
 local Yacht_MS = {
     {"YACHT_MISSION_PROG", 0},
     {"YACHT_MISSION_FLOW", 21845},
-    {"CASINO_DECORATION_GIFT_1", -1}
+    {"CASINO_DECORATION_GIFT_1", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁游艇任务", "action", MASTER_UNLOCKR.id, function()
     menu.notify("游艇任务已解锁", "解锁大师", 3, 0x6400FA14)
@@ -6357,16 +6920,16 @@ end
 
 do
 local FLY_SCHOOL_I = {
-    {"PILOT_SCHOOL_MEDAL_0", -1},
-    {"PILOT_SCHOOL_MEDAL_1", -1},
-    {"PILOT_SCHOOL_MEDAL_2", -1},
-    {"PILOT_SCHOOL_MEDAL_3", -1},
-    {"PILOT_SCHOOL_MEDAL_4", -1},
-    {"PILOT_SCHOOL_MEDAL_5", -1},
-    {"PILOT_SCHOOL_MEDAL_6", -1},
-    {"PILOT_SCHOOL_MEDAL_7", -1},
-    {"PILOT_SCHOOL_MEDAL_8", -1},
-    {"PILOT_SCHOOL_MEDAL_9", -1}
+    {"PILOT_SCHOOL_MEDAL_0", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_1", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_2", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_3", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_4", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_5", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_6", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_7", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_8", 0xFFFFFFF},
+    {"PILOT_SCHOOL_MEDAL_9", 0xFFFFFFF}
 }
 local FLY_SCHOOL_B = {
     {"PILOT_ASPASSEDLESSON_0", true},
@@ -6393,12 +6956,12 @@ end
 
 do
 local FAST_RUN_ON = {
-    {"CHAR_FM_ABILITY_1_UNLCK", -1},
-    {"CHAR_FM_ABILITY_2_UNLCK", -1},
-    {"CHAR_FM_ABILITY_3_UNLCK", -1},
-    {"CHAR_ABILITY_1_UNLCK", -1},
-    {"CHAR_ABILITY_2_UNLCK", -1},
-    {"CHAR_ABILITY_3_UNLCK", -1}
+    {"CHAR_FM_ABILITY_1_UNLCK", 0xFFFFFFF},
+    {"CHAR_FM_ABILITY_2_UNLCK", 0xFFFFFFF},
+    {"CHAR_FM_ABILITY_3_UNLCK", 0xFFFFFFF},
+    {"CHAR_ABILITY_1_UNLCK", 0xFFFFFFF},
+    {"CHAR_ABILITY_2_UNLCK", 0xFFFFFFF},
+    {"CHAR_ABILITY_3_UNLCK", 0xFFFFFFF}
 }
 local FAST_RUN_OFF = {
     {"CHAR_FM_ABILITY_1_UNLCK", 0},
@@ -6425,10 +6988,10 @@ end
 
 do
 local VEH_TRADE_PR = {
-    {"AT_FLOW_IMPEXP_NUM", -1},
-    {"AT_FLOW_VEHICLE_BS", -1},
-    {"GANGOPS_FLOW_BITSET_MISS0", -1},
-    {"WVM_FLOW_VEHICLE_BS", -1}
+    {"AT_FLOW_IMPEXP_NUM", 0xFFFFFFF},
+    {"AT_FLOW_VEHICLE_BS", 0xFFFFFFF},
+    {"GANGOPS_FLOW_BITSET_MISS0", 0xFFFFFFF},
+    {"WVM_FLOW_VEHICLE_BS", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁部分载具批发价", "action", MASTER_UNLOCKR.id, function()
     menu.notify("批发价解锁", "解锁大师", 3, 0x6400FA14)
@@ -6441,18 +7004,18 @@ end
 
 do
 local CONTACTx_UNLCK = {
-    {"FM_ACT_PHN", -1},
-    {"FM_ACT_PH2", -1},
-    {"FM_ACT_PH3", -1},
-    {"FM_ACT_PH4", -1},
-    {"FM_ACT_PH5", -1},
-    {"FM_VEH_TX1", -1},
-    {"FM_ACT_PH6", -1},
-    {"FM_ACT_PH7", -1},
-    {"FM_ACT_PH8", -1},
-    {"FM_ACT_PH9", -1},
-    {"FM_CUT_DONE", -1},
-    {"FM_CUT_DONE_2", -1}
+    {"FM_ACT_PHN", 0xFFFFFFF},
+    {"FM_ACT_PH2", 0xFFFFFFF},
+    {"FM_ACT_PH3", 0xFFFFFFF},
+    {"FM_ACT_PH4", 0xFFFFFFF},
+    {"FM_ACT_PH5", 0xFFFFFFF},
+    {"FM_VEH_TX1", 0xFFFFFFF},
+    {"FM_ACT_PH6", 0xFFFFFFF},
+    {"FM_ACT_PH7", 0xFFFFFFF},
+    {"FM_ACT_PH8", 0xFFFFFFF},
+    {"FM_ACT_PH9", 0xFFFFFFF},
+    {"FM_CUT_DONE", 0xFFFFFFF},
+    {"FM_CUT_DONE_2", 0xFFFFFFF}
 }
     menu.add_feature("» 解锁所有联系人", "action", MASTER_UNLOCKR.id, function()
     menu.notify("联系人已解锁", "解锁大师", 3, 0x6400FA14)
@@ -6480,10 +7043,6 @@ local VANNIL_AWD = {
 end
 
 do
-local ALN_EG_MS = {
-    {"LFETIME_BIKER_BUY_COMPLET5", 599},
-    {"LFETIME_BIKER_BUY_UNDERTA5", 599}
-}
 local BUNKR_UNLCK = {
     {"SR_HIGHSCORE_1", 690},
     {"SR_HIGHSCORE_2", 1860},
@@ -6492,7 +7051,7 @@ local BUNKR_UNLCK = {
     {"SR_HIGHSCORE_5", 2650},
     {"SR_HIGHSCORE_6", 450},
     {"SR_TARGETS_HIT", 269},
-    {"SR_WEAPON_BIT_SET", -1}
+    {"SR_WEAPON_BIT_SET", 0xFFFFFFF}
 }
 local BUNKR_UNLCK_B = {
 
@@ -6500,15 +7059,26 @@ local BUNKR_UNLCK_B = {
     {"SR_TIER_3_REWARD", true},
     {"SR_INCREASE_THROW_CAP", true}
 }
-
+local ALN_EG_MS = {
+    {"LFETIME_BIKER_BUY_COMPLET5", 600},
+    {"LFETIME_BIKER_BUY_UNDERTA5", 600}
+}
 local BNKR_AWARDS = menu.add_feature("» 解锁地堡奖励", "parent", MASTER_UNLOCKR.id)
-    menu.add_feature("» 外星蛋运货(彩蛋)", "toggle", BNKR_AWARDS.id, function(a)
-    menu.notify("必须要在晚上9点到11点之间运货", "解锁大师", 3, 0x6414F0FF)
-    while a.on do
+    menu.add_feature("外星蛋运货(彩蛋)", "toggle", mission_cheat.id, function(a)
+    menu.notify("去地堡拉货即可\n感谢群友老爷爷(79797672)提供的代码及思路", "解锁大师", 3, 0x6414F0FF)
+    menu.notify("2T玩家交流群：872986398\n买科技加群775255063", "解锁大师", 3, 0x6414F0FF)
+    if a.on then
         system.yield(0)
-        for i = 1, #ALN_EG_MS do
-            stat_set_int(ALN_EG_MS[i][1], true, ALN_EG_MS[i][2])
+        local hash0 = gameplay.get_hash_key("MP0_LFETIME_BIKER_BUY_COMPLET5",0,true)
+        local hash1 = gameplay.get_hash_key("MP1_LFETIME_BIKER_BUY_COMPLET5",0,true)
+        local hash2 = gameplay.get_hash_key("MP0_LFETIME_BIKER_BUY_UNDERTA5",0,true)
+        local hash3 = gameplay.get_hash_key("MP1_LFETIME_BIKER_BUY_UNDERTA5",0,true)
+        if hash0<600 or hash1<600 or hash2<600 or hash3<600 then
+            for i = 1, #ALN_EG_MS do
+                stat_set_int(ALN_EG_MS[i][1], true, ALN_EG_MS[i][2])
+            end
         end
+        script.set_global_i(2544210+5191+342,20)
     end
 end)
 
@@ -6554,7 +7124,7 @@ do
 local ORBT_CLDWN_ = {
     {"ORBITAL_CANNON_COOLDOWN", 0}
 }
-    menu.add_feature("[!] 移除天基炮冷却 [风险]", "action", MASTER_UNLOCKR.id, function()
+    menu.add_feature("移除天基炮冷却 [风险]", "action", MASTER_UNLOCKR.id, function()
     menu.notify("滥用这一选项可能导致封禁!!!", "Warning", 5, 0x641400FF)
     menu.notify("冷却已移除!", "解锁大师", 3, 0x6400FA14)
         for i = 1, #ORBT_CLDWN_ do

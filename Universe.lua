@@ -195,7 +195,7 @@ local main_about=menu.add_feature(
     main.id,
     function ()
     -----------------严禁修改此处----------------------------
-        ui.notify_above_map("~b~Universe_SYS\n欢迎使用Universe v1.2\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用Universe",0)
+        ui.notify_above_map("~b~Universe_SYS\n欢迎使用Universe v1.2.1\n2T玩家交流群：872986398\n买科技加群775255063","欢迎使用Universe",0)
         --menu.notify("Universe_SYS\n本LUA部分函数已获KEK授权","欢迎使用Universe v0.6",6)
         ui.notify_above_map("~b~Universe_SYS\n本LUA开源地址\n~y~https://github.com/BaiXinSpuer/2T1_BX_MIX","欢迎使用Universe",0)
     -----------------严禁修改此处---------------------------- 
@@ -1343,6 +1343,10 @@ function pass()
     return nil
 end
 
+
+
+
+
 local function is_pz(hash)
     if hash==487013001 or hash==1432025498 or hash==2017895192 or hash==2640438543 or hash==3800352039 or hash==2828843422 or hash==984333226 or hash==4019527611 or hash==317205821 or hash==94989220 then
         return 177293209
@@ -2441,39 +2445,39 @@ local user_name_trial=menu.add_feature(
                 for i=1,#key_words_name do
                     if player_name:match("%"..key_words_name[i]) then
                         menu.notify("检测到类似广告机昵称\n正在混合崩溃+踢出玩家+混合任务+公寓邀请+送上岛+交易错误的玩家名为：\n\n"..player.get_player_name(pid).."\nR*ID为\n"..player.get_player_scid(pid),"Universe",6,8)
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             for x=0,4 do
                                 send_script_event("Crash "..tostring(x), pid, {pid, generic_player_global(pid)})
                             end
                         end
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             network.network_session_kick_player(pid)
                             send_script_event("Netbail kick", pid, {pid, generic_player_global(pid)})
                         end
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             for x=0,17 do
                                 send_script_event("Kick "..tostring(x), pid, {pid, generic_player_global(pid)})
                             end
                         end
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             send_script_event("Transaction error", pid, {pid, generic_player_global(pid)})
                         end
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             for x=1,3 do
                                 send_script_event("Script host crash "..tostring(x), pid, {pid, generic_player_global(pid)})
                             end
                         end
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             for x=1,300 do
                                 send_script_event("Send to mission"..tostring(x), pid, {pid, generic_player_global(pid)})
                             end
                         end
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             for x=1,300 do
                                 send_script_event("Send to Perico island"..tostring(x), pid, {pid, generic_player_global(pid)})
                             end
                         end
-                        if player.is_valid(pid) then
+                        if player.is_player_valid(pid) then
                             for x=1,300 do
                                 send_script_event("Apartment invite"..tostring(x), pid, {pid, generic_player_global(pid)})
                             end
@@ -2513,39 +2517,39 @@ local Chat_trial=menu.add_feature(
                     for i=1,#key_words do
                         if msg:match("%"..key_words[i]) then
                             menu.notify("检测到广告机\n正在混合崩溃+踢出玩家+混合任务+公寓邀请+送上岛+交易错误的玩家名为：\n\n"..player.get_player_name(pid).."\nR*ID为\n"..player.get_player_scid(pid),"Universe",6,8)
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 for x=0,4 do
                                     send_script_event("Crash "..tostring(x), pid, {pid, generic_player_global(pid)})
                                 end
                             end
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 network.network_session_kick_player(pid)
                                 send_script_event("Netbail kick", pid, {pid, generic_player_global(pid)})
                             end
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 for x=0,17 do
                                     send_script_event("Kick "..tostring(x), pid, {pid, generic_player_global(pid)})
                                 end
                             end
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 send_script_event("Transaction error", pid, {pid, generic_player_global(pid)})
                             end
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 for x=1,3 do
                                     send_script_event("Script host crash "..tostring(x), pid, {pid, generic_player_global(pid)})
                                 end
                             end
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 for x=1,300 do
                                     send_script_event("Send to mission"..tostring(x), pid, {pid, generic_player_global(pid)})
                                 end
                             end
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 for x=1,300 do
                                     send_script_event("Send to Perico island"..tostring(x), pid, {pid, generic_player_global(pid)})
                                 end
                             end
-                            if player.is_valid(pid) then
+                            if player.is_player_valid(pid) then
                                 for x=1,300 do
                                     send_script_event("Apartment invite"..tostring(x), pid, {pid, generic_player_global(pid)})
                                 end
@@ -2661,12 +2665,13 @@ end
 
 local function ghost_head(pid,me,my_ped)
     local enemy_ped=player.get_player_ped(pid)
-    local my_pos=player.get_player_coords(me)
+    local z=cam.get_gameplay_cam_rot().z
     if ped.is_ped_shooting(enemy_ped) then
-        entity.set_entity_coords_no_offset(my_ped,my_pos+v3(math.random(-2,2),math.random(-2,2),math.random(-2,2)))
-        system.yield(0)
-        entity.set_entity_coords_no_offset(my_ped,my_pos)
+        entity.set_entity_rotation(player.get_player_ped(player.player_id()),v3(0,0,z+90))
+    else
+        entity.set_entity_rotation(player.get_player_ped(player.player_id()),v3(0,0,z-90))
     end
+    
 end
 
 
@@ -2837,18 +2842,47 @@ local vehicle_flier=menu.add_feature(
                 local my_veh=player.get_player_vehicle(me)
                 --network.request_control_of_entity(my_veh)
                 entity.set_entity_max_speed(my_veh,a.value)
-                entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot())
-                if controls.get_control_normal(0,32)==1.0 and controls.get_control_normal(0,33)==1.0 then
+                if controls.get_control_normal(0,32)==1.0 and controls.get_control_normal(0,34)==1.0 and controls.get_control_normal(0,33)==1.0 and controls.get_control_normal(0,35)==1.0 or controls.get_control_normal(0,34)==1.0 and controls.get_control_normal(0,35)==1.0 or controls.get_control_normal(0,32)==1.0 and controls.get_control_normal(0,33)==1.0 then
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot())
                     vehicle.set_vehicle_forward_speed(my_veh,0)
-                elseif controls.get_control_normal(0,32)==1.0 then
-                    entity.set_entity_max_speed(my_veh,a.value)
+                elseif controls.get_control_normal(0,32)==1.0 and controls.get_control_normal(0,34)==1.0 and controls.get_control_normal(0,33)==1.0 then
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot())
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                elseif  controls.get_control_normal(0,32)==1.0 and controls.get_control_normal(0,34)==1.0 then
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot()+v3(0,0,45))
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                elseif controls.get_control_normal(0,32)==1.0 and controls.get_control_normal(0,35)==1.0 then 
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot()-v3(0,0,45))
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                elseif controls.get_control_normal(0,33)==1.0 and controls.get_control_normal(0,35)==1.0 then
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot()-v3(0,0,135))
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                elseif controls.get_control_normal(0,33)==1.0 and controls.get_control_normal(0,34)==1.0 then
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot()+v3(0,0,135))
                     vehicle.set_vehicle_forward_speed(my_veh,a.value)
                 elseif controls.get_control_normal(0,33)==1.0 then
-                    entity.set_entity_max_speed(my_veh,a.value)
-                    vehicle.set_vehicle_forward_speed(my_veh,a.value*-1)
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot()-v3(0,0,180))
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                elseif controls.get_control_normal(0,34)==1.0 then
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot()+v3(0,0,90))
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                elseif controls.get_control_normal(0,35)==1.0 then
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot()-v3(0,0,90))
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                elseif controls.get_control_normal(0,32)==1.0 then
+                    vehicle.set_vehicle_forward_speed(my_veh,a.value)
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot())
                 else
                     vehicle.set_vehicle_forward_speed(my_veh,0)
+                    entity.set_entity_rotation(my_veh,cam.get_gameplay_cam_rot())
+
                 end
+                if controls.get_control_normal(0,21)==1.0 or controls.get_control_normal(0,143)==1.0 then
+                    entity.set_entity_velocity(my_veh,v3(0,0,a.value))
+                elseif controls.get_control_normal(0,132)==1.0 then
+                    entity.set_entity_velocity(my_veh,v3(0,0,a.value*-1))
+                end
+
             else
                 set_vehicle_fixed(player.get_player_ped(player.player_id()))
             end
